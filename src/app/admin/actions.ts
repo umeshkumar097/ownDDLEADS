@@ -113,21 +113,26 @@ export async function setGlobalBroadcast(message: string, durationHours: number)
 }
 
 export async function getActiveBroadcast() {
-    const activeMessages = await db.query.broadcastMessages.findMany({
-        where: eq(broadcastMessages.isActive, true),
-        orderBy: [desc(broadcastMessages.createdAt)],
-        limit: 1
-    });
+    try {
+        const activeMessages = await db.query.broadcastMessages.findMany({
+            where: eq(broadcastMessages.isActive, true),
+            orderBy: [desc(broadcastMessages.createdAt)],
+            limit: 1
+        });
 
-    const active = activeMessages[0];
+        const active = activeMessages[0];
 
-    if (active && active.expiresAt && new Date() > active.expiresAt) {
-        // Expired, mark inactive
-        await db.update(broadcastMessages).set({ isActive: false }).where(eq(broadcastMessages.id, active.id));
+        if (active && active.expiresAt && new Date() > active.expiresAt) {
+            // Expired, mark inactive
+            await db.update(broadcastMessages).set({ isActive: false }).where(eq(broadcastMessages.id, active.id));
+            return null;
+        }
+
+        return active ? active.message : null;
+    } catch (error) {
+        console.error("Failed to fetch broadcast messages during build/runtime:", error);
         return null;
     }
-
-    return active ? active.message : null;
 }
 
 // 4. Admin Overview Stats
