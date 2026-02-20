@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FounderImage from '@/components/FounderImage';
 import { Linkedin } from 'lucide-react';
 
 export const metadata = {
@@ -31,14 +32,7 @@ export default function AboutPage() {
                     <div className="w-full md:w-1/3 flex justify-center relative z-10">
                         <div className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-indigo-100 shadow-xl bg-slate-100 flex items-center justify-center relative">
                             {/* Assuming the user will place the image at /founder.png */}
-                            <img
-                                src="/founder.png"
-                                alt="Umesh Kumar, Founder"
-                                className="w-full h-full object-cover z-20"
-                                onError={(e) => {
-                                    (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=Umesh+Kumar&background=4f46e5&color=fff&size=512';
-                                }}
-                            />
+                            <FounderImage />
                         </div>
                     </div>
 
