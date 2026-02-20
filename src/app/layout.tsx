@@ -5,6 +5,8 @@ import Providers from "@/components/Providers";
 import BroadcastBanner from "@/components/BroadcastBanner";
 import Script from "next/script";
 
+export const dynamic = "force-dynamic";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

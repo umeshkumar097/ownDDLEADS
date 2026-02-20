@@ -11,6 +11,14 @@ import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
 
 export default function DashboardPage() {
+    return (
+        <Suspense fallback={<FullPageLoader message="Loading Dashboard..." />}>
+            <DashboardContent />
+        </Suspense>
+    );
+}
+
+function DashboardContent() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const searchParams = useSearchParams();
