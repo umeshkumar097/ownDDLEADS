@@ -1,0 +1,22 @@
+Using APP ID: 243899e2bfdaec247c4ceca8d3998342
+Payload: {
+  "order_amount": 999,
+  "order_currency": "INR",
+  "order_id": "order_1771621486037_48de63e2",
+  "customer_details": {
+    "customer_id": "test_user_12345",
+    "customer_name": "Test User",
+    "customer_email": "test@example.com",
+    "customer_phone": "9999999999"
+  },
+  "order_meta": {
+    "return_url": "http://localhost:3001/dashboard/wallet?order_id={order_id}&status={order_status}",
+    "notify_url": "http://localhost:3001/api/webhooks/cashfree"
+  }
+}
+PROD Cashfree Response: {
+  "code": "order_meta.return_url_invalid",
+  "message": "order_meta.return_url : url should be https. Value received: http://localhost:3001/dashboard/wallet?order_id={order_id}&status={order_status}",
+  "type": "invalid_request_error"
+}
+Done

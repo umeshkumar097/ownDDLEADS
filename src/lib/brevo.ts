@@ -1,0 +1,203 @@
+import { db } from '@/db';
+import { emailLogs } from '@/db/schema';
+
+export async function sendTransactionalEmail({
+    to,
+    subject,
+    htmlContent,
+    senderName = 'DhandaLeads Team',
+}: {
+    to: { email: string; name?: string }[];
+    subject: string;
+    htmlContent: string;
+    senderName?: string;
+}) {
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const SENDER_EMAIL = 'info@dhandaleads.com';
+
+    if (!BREVO_API_KEY) {
+        console.error('Missing BREVO_API_KEY in environment variables.');
+        return false;
+    }
+
+    try {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'api-key': BREVO_API_KEY,
+            },
+            body: JSON.stringify({
+                sender: { email: SENDER_EMAIL, name: senderName },
+                to,
+                subject,
+                htmlContent,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Brevo API Error:', errorText);
+
+            // Log Failure
+            for (const recipient of to) {
+                await db.insert(emailLogs).values({
+                    recipientEmail: recipient.email,
+                    subject: subject,
+                    status: 'failed',
+                    errorDetails: errorText
+                }).catch(e => console.error("Could not write email log:", e));
+            }
+
+            return false;
+        }
+
+        // Log Success
+        for (const recipient of to) {
+            await db.insert(emailLogs).values({
+                recipientEmail: recipient.email,
+                subject: subject,
+                status: 'sent',
+                errorDetails: null
+            }).catch(e => console.error("Could not write email log:", e));
+        }
+
+        return true;
+    } catch (error: any) {
+        console.error('Failed to send email via Brevo:', error);
+
+        // Log Critical Exception
+        for (const recipient of to) {
+            await db.insert(emailLogs).values({
+                recipientEmail: recipient.email,
+                subject: subject,
+                status: 'failed',
+                errorDetails: error?.message || 'Unknown network error'
+            }).catch(e => console.error("Could not write email log:", e));
+        }
+
+        return false;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Pre-defined Email Templates
+// -----------------------------------------------------------------------------
+
+export async function sendVerificationEmail(email: string, name: string, token: string) {
+    const verificationUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify/${token}`;
+
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0f172a; padding: 40px; border-radius: 16px; color: #f8fafc; border: 1px solid #1e293b;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #10b981; margin: 0; font-size: 28px; letter-spacing: -0.5px;">DhandaLeads</h1>
+                <p style="color: #64748b; font-size: 14px; margin-top: 4px; text-transform: uppercase; letter-spacing: 2px;">The B2B Data Engine</p>
+            </div>
+            <h2 style="color: #f1f5f9; font-size: 22px;">Welcome aboard, ${name}! 🚀</h2>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">You're just one step away from unlocking ultra high-quality B2B leads. Please verify your email address to activate your account securely.</p>
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="${verificationUrl}" style="background-color: #10b981; color: #022c22; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);">Verify Email Address</a>
+            </div>
+            <p style="color: #64748b; font-size: 13px;">If the button doesn't work, copy and paste this link into your browser:<br/>
+                <a href="${verificationUrl}" style="color: #38bdf8; text-decoration: none; margin-top: 8px; display: inline-block; word-break: break-all;">${verificationUrl}</a>
+            </p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+                <p style="color: #475569; font-size: 12px;">© ${new Date().getFullYear()} Aiclex Technologies. Building for India.</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email, name }],
+        subject: 'Action Required: Verify your DhandaLeads Account',
+        htmlContent,
+    });
+}
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0f172a; padding: 40px; border-radius: 16px; color: #f8fafc; border: 1px solid #1e293b;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #818cf8; margin: 0; font-size: 28px; letter-spacing: -0.5px;">DhandaLeads</h1>
+            </div>
+            <h2 style="color: #f1f5f9; font-size: 22px;">Security Protocol 🔐</h2>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">We received a verified request to reset the password for your DhandaLeads Admin/User account associated with this email address.</p>
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="${resetUrl}" style="background-color: #6366f1; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);">Authorize Password Reset</a>
+            </div>
+            <p style="color: #64748b; font-size: 13px;">If you didn't initiate this request, your account is still secure. You can safely ignore this automated message.</p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+                <p style="color: #475569; font-size: 12px;">Secure Transmission by DhandaLeads Infrastructure</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email }],
+        subject: 'Security: Reset your DhandaLeads Password',
+        htmlContent,
+    });
+}
+
+export async function sendLowCreditAlertEmail(email: string, name: string, remainingCredits: number) {
+    const rechargeUrl = `${process.env.NEXTAUTH_URL}/dashboard/wallet`;
+
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0f172a; padding: 40px; border-radius: 16px; color: #f8fafc; border: 1px solid #e11d48;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #e11d48; margin: 0; font-size: 28px; letter-spacing: -0.5px;">DhandaLeads Vault</h1>
+            </div>
+            <h2 style="color: #f1f5f9; font-size: 22px;">Low Credit Alert ⚠️</h2>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">Hi ${name}, your B2B data extraction pipeline is about to halt. You currently have <strong style="color: #fb7185; font-size: 18px;">only ${remainingCredits} credits remaining.</strong></p>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">Don't let your sales team stop prospecting! Top up your wallet now to keep generating high-conversion leads.</p>
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="${rechargeUrl}" style="background-color: #e11d48; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 4px 14px 0 rgba(225, 29, 72, 0.39);">Recharge Credits Now</a>
+            </div>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+                <p style="color: #475569; font-size: 12px;">Automated God-Eye Alert System</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email, name }],
+        subject: 'URGENT: Your DhandaLeads Credits are Running Out',
+        htmlContent,
+    });
+}
+
+export async function sendPurchaseConfirmationEmail(email: string, name: string, creditsAdded: number, amountPaid: number) {
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0f172a; padding: 40px; border-radius: 16px; color: #f8fafc; border: 1px solid #1e293b;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #10b981; margin: 0; font-size: 28px; letter-spacing: -0.5px;">DhandaLeads Billing</h1>
+            </div>
+            <h2 style="color: #f1f5f9; font-size: 22px;">Payment Processed! 💸</h2>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">Hi ${name}, we successfully received your secure payment of <strong style="color: #10b981;">₹${amountPaid}</strong>.</p>
+            
+            <div style="background-color: #1e293b; border-radius: 12px; padding: 24px; margin: 32px 0; text-align: center; border: 1px solid #334155;">
+                <span style="font-size: 42px; font-weight: 900; color: #34d399;">+${creditsAdded}</span>
+                <p style="color: #94a3b8; font-weight: 800; margin-top: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 2px;">Credits Deployed to Wallet</p>
+            </div>
+            
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6;">You can use these tokens instantly to slice through bulk datasets and find premium phone numbers and emails. Thank you for scaling your enterprise with us.</p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="${process.env.NEXTAUTH_URL}/dashboard/wallet" style="background-color: #10b981; color: #022c22; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);">Access Ledger</a>
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+                <p style="color: #475569; font-size: 12px;">This is an automated tax invoice and receipt.</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email, name }],
+        subject: `Receipt: ${creditsAdded} Premium Leads Added to your Wallet`,
+        htmlContent,
+    });
+}
