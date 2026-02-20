@@ -82,11 +82,11 @@ export default function WalletPage() {
                                 <CreditCard className="w-5 h-5 text-indigo-400" /> Available Balance
                             </h2>
                             <div className="mt-4 flex items-baseline gap-4">
-                                <span className="text-6xl md:text-7xl font-black text-white">{session?.user?.creditsBalance || 0}</span>
+                                <span className="text-6xl md:text-7xl font-black text-white">{(session?.user as any)?.creditsBalance || 0}</span>
                                 <span className="text-xl text-indigo-300 font-medium">Credits</span>
                             </div>
 
-                            {(session?.user?.creditsBalance || 0) < 10 ? (
+                            {((session?.user as any)?.creditsBalance || 0) < 10 ? (
                                 <div className="mt-8">
                                     <Link href="/pricing" className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_-5px_rgba(225,29,72,0.6)] animate-pulse">
                                         Low Credits! Buy Now to Keep Scaling <ArrowUpRight className="w-5 h-5" />
