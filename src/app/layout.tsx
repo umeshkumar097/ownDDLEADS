@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import BroadcastBanner from "@/components/BroadcastBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -91,8 +92,10 @@ export default function RootLayout({
           />
         </noscript>
         <Providers>
-          <BroadcastBanner />
-          {children}
+          <ErrorBoundary>
+            <BroadcastBanner />
+            {children}
+          </ErrorBoundary>
         </Providers>
       </body>
     </html>

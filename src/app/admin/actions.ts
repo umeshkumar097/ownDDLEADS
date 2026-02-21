@@ -301,3 +301,69 @@ export async function addSeoKeyword(keyword: string, intentHeadline: string) {
         return { success: false, error: e.message };
     }
 }
+
+export async function bulkAddSeoCities(csvData: string) {
+    const adminId = await verifyAdmin();
+    const { seoCities } = await import('@/db/schema');
+
+    const lines = csvData.split('\n').filter(l => l.trim().length > 0);
+    let added = 0;
+
+    for (const line of lines) {
+        const parts = line.split(',');
+        const name = parts[0].trim();
+        const state = parts.length > 1 ? parts[1].trim() : 'India';
+        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        try {
+            await db.insert(seoCities).values({ name, slug, state, isActive: true }).onConflictDoNothing();
+            added++;
+        } catch (e: any) {
+            console.error(`Failed to bulk add city ${name}:`, e);
+        }
+    }
+
+    await db.insert(adminAuditLogs).values({
+        adminId,
+        actionType: 'SEO_CITY_BULK_ADD',
+        description: `Bulk Added ${added} SEO Cities`
+    });
+
+    return { success: true, count: added };
+}
+
+export async function bulkAddSeoKeywords(csvData: string) {
+    const adminId = await verifyAdmin();
+    const { seoKeywords } = await import('@/db/schema');
+
+    const lines = csvData.split('\n').filter(l => l.trim().length > 0);
+    let added = 0;
+
+    for (const line of lines) {
+        const parts = line.split('|');
+        const keyword = parts[0].trim();
+        const intentHeadline = parts.length > 1 ? parts[1].trim() : `Top ${keyword}`;
+        const slug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        try {
+            await db.insert(seoKeywords).values({
+                keyword,
+                slug,
+                intentHeadline,
+                contextParagraph: '',
+                isActive: true
+            }).onConflictDoNothing();
+            added++;
+        } catch (e: any) {
+            console.error(`Failed to bulk add keyword ${keyword}:`, e);
+        }
+    }
+
+    await db.insert(adminAuditLogs).values({
+        adminId,
+        actionType: 'SEO_KEYWORD_BULK_ADD',
+        description: `Bulk Added ${added} SEO Keywords`
+    });
+
+    return { success: true, count: added };
+}

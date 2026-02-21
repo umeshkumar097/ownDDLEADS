@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users, verificationTokens } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { sendWhatsAppMessage } from '@/lib/whatsapp';
 
 export async function GET(req: Request, context: { params: Promise<{ token: string }> }) {
     try {
@@ -38,6 +39,12 @@ export async function GET(req: Request, context: { params: Promise<{ token: stri
 
         // Delete the token
         await db.delete(verificationTokens).where(eq(verificationTokens.token, token));
+
+        // Send WhatsApp Welcome Automation
+        if (user.phone) {
+            const welcomeMsg = `Hi ${user.name || 'User'}, DhandaLeads (Aiclex Tech) par aapka swagat hai. Kya main aapko aapki city ki premium leads dikhaun?`;
+            await sendWhatsAppMessage(user.phone, welcomeMsg, 'WELCOME', user.id);
+        }
 
         // Redirect to login with success flag
         return NextResponse.redirect(new URL('/login?verified=true', req.url));

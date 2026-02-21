@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { db } from '@/db';
-import { users } from '@/db/schema';
+import { users, allTransactions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { creditAmount, priceInCents, name } = body;
+        const { creditAmount, priceInCents, name, sourceCity, sourceKeyword } = body;
 
         // Cashfree requires amount in decimals (e.g. 999.00), not cents
         const amountInINR = (priceInCents / 100).toFixed(2);
@@ -54,7 +54,9 @@ export async function POST(req: Request) {
             order_tags: {
                 credits: creditAmount.toString(),
                 userId: liveUser.id,
-                planName: name
+                planName: name,
+                sourceCity: sourceCity || "",
+                sourceKeyword: sourceKeyword || ""
             }
         };
 
@@ -75,6 +77,17 @@ export async function POST(req: Request) {
             console.error("Cashfree Order Create Error:", data);
             return NextResponse.json({ error: 'Failed to create Cashfree order', details: data }, { status: 400 });
         }
+
+        // Phase 14: Log PENDING checkout for abandoned cart recovery
+        await db.insert(allTransactions).values({
+            userId: liveUser.id,
+            amount: parseFloat(amountInINR).toString(),
+            creditsAdded: creditAmount,
+            gatewayTxnId: orderId, // Store our local orderId temporarily
+            status: 'PENDING',
+            sourceCity: sourceCity || null,
+            sourceKeyword: sourceKeyword || null
+        });
 
         return NextResponse.json({ payment_session_id: data.payment_session_id, order_id: orderId });
 

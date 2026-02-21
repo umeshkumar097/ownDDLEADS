@@ -11,11 +11,14 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
 
     const handleSubscribe = async (creditAmount: number, priceInCents: number, name: string) => {
         const toastId = toast.loading('Initializing Secure Checkout...');
+        const sourceCity = localStorage.getItem('dhanda_sourceCity');
+        const sourceKeyword = localStorage.getItem('dhanda_sourceKeyword');
+
         try {
             const res = await fetch('/api/checkout/cashfree', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ creditAmount, priceInCents, name })
+                body: JSON.stringify({ creditAmount, priceInCents, name, sourceCity, sourceKeyword })
             });
             if (res.status === 401) {
                 toast.error('Please log in to purchase credits', { id: toastId, style: { background: '#333', color: '#fff' } });

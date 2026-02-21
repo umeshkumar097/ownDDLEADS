@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
     const topCities = [
@@ -17,7 +18,7 @@ export default function Footer() {
         <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 relative z-20">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-5 gap-8 mb-12">
                 <div className="col-span-1 md:col-span-2">
-                    <img src="/logo.png" alt="DhandaLeads" className="h-8 w-auto object-contain brightness-0 invert opacity-80 mb-6" />
+                    <Image src="/logo.png" width={160} height={32} alt="DhandaLeads" className="h-8 w-auto object-contain brightness-0 invert opacity-80 mb-6" />
                     <p className="mb-4 max-w-sm">The smartest B2B data engine for Indian businesses. Find, verify, and close leads on autopilot.</p>
                     <p className="text-white font-bold tracking-wide">A Product of <span className="text-emerald-400">Aiclex Technologies</span></p>
                 </div>

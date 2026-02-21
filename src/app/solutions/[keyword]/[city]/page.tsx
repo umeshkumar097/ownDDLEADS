@@ -1,9 +1,13 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { db } from '@/db';
 import { seoCities, seoKeywords } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import ExitIntentPopup from '@/components/ExitIntentPopup';
+import TrustWallToast from '@/components/TrustWallToast';
+export const revalidate = 2592000; // Cache for 30 days
 import { CheckCircle2, ArrowRight, BarChart3, Zap, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -36,7 +40,12 @@ export async function generateMetadata({ params }: { params: Promise<{ keyword: 
     const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
     const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
-    if (!keywordData.length || !cityData.length) return {};
+    if (!keywordData.length || !cityData.length) {
+        return {
+            title: `B2B Lead Generation in India | DhandaLeads`,
+            description: `Looking for the best B2B leads in India? Discover highly targeted B2B data specific to your location today.`,
+        };
+    }
 
     const keyword = keywordData[0];
     const city = cityData[0];
@@ -60,22 +69,70 @@ export default async function DynamicSEOLandingPage({ params }: { params: Promis
     const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
     const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
-    if (!keywordData.length || !cityData.length) {
-        notFound();
-    }
+    let keyword = keywordData[0];
+    let city = cityData[0];
 
-    const keyword = keywordData[0];
-    const city = cityData[0];
+    // Fallback System: Redirect to India if not found
+    if (!keywordData.length || !cityData.length) {
+        if (resolvedParams.city !== 'india') {
+            const fallbackKeyword = keywordData.length ? resolvedParams.keyword : 'lead-generation-company';
+            redirect(`/solutions/${fallbackKeyword}/india`);
+        }
+
+        // If it's already on 'india' but not in DB, fabricate the object to avoid 404 crash
+        if (!cityData.length) {
+            city = { name: 'India', slug: 'india', state: 'National', isActive: true, id: 0, createdAt: new Date() };
+        }
+        if (!keywordData.length) {
+            keyword = { keyword: 'Lead Generation Company', slug: 'lead-generation-company', intentHeadline: 'The #1 B2B Lead Generation Company', contextParagraph: null, isActive: true, id: 0, createdAt: new Date() };
+        }
+    }
 
     // Build the dynamic variables
     const heroSubheadline = keyword.contextParagraph || `Supercharge your B2B sales in ${city.name} with precise, verified data tailored for your precise ideal customer profile.`;
     const trustSignal = `Trusted by over 500+ Businesses scaling locally in ${city.name}, ${city.state}.`;
 
+    // Build JSON-LD FAQs
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": `How to get ${keyword.keyword.toLowerCase()} in ${city.name}?`,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": `DhandaLeads provides a powerful AI-driven platform to extract and verify B2B ${keyword.keyword.toLowerCase()} in ${city.name} instantly. Simply sign up, search for your target audience, and unlock verified emails and phone numbers.`
+                }
+            },
+            {
+                "@type": "Question",
+                "name": `Are the leads from ${city.name} verified?`,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": `Yes, every single lead generated for ${city.name} goes through our real-time verification process, ensuring a 99% delivery rate for emails and authentic LinkedIn profiles.`
+                }
+            },
+            {
+                "@type": "Question",
+                "name": `What industries do you cover in ${city.name}?`,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": `We cover all major B2B sectors in ${city.name}, including IT, Manufacturing, Real Estate, Healthcare, and Corporate Services.`
+                }
+            }
+        ]
+    };
+
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30 flex flex-col pt-16">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
             <Navbar />
 
             <main className="flex-1">
+                <ExitIntentPopup city={city.name} keyword={keyword.keyword} />
+                <TrustWallToast />
+
                 {/* Hero Section */}
                 <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-32 px-6">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl">
@@ -150,8 +207,23 @@ export default async function DynamicSEOLandingPage({ params }: { params: Promis
                     </div>
                 </section>
 
+                {/* FAQs Section */}
+                <section className="py-20 bg-slate-950 border-t border-white/5 relative z-10">
+                    <div className="max-w-4xl mx-auto px-6">
+                        <h2 className="text-3xl font-bold mb-10 text-center">Frequently Asked Questions</h2>
+                        <div className="space-y-6">
+                            {faqSchema.mainEntity.map((faq, idx) => (
+                                <div key={idx} className="bg-slate-900/50 border border-white/5 rounded-2xl p-8 hover:border-indigo-500/30 transition-colors">
+                                    <h3 className="text-xl font-bold mb-3 text-indigo-300">{faq.name}</h3>
+                                    <p className="text-slate-300 leading-relaxed tracking-wide">{faq.acceptedAnswer.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
                 {/* Final CTA */}
-                <section className="py-24 px-6 relative z-10">
+                <section className="py-24 px-6 relative z-10 border-t border-white/5">
                     <div className="max-w-4xl mx-auto text-center bg-gradient-to-b from-indigo-900/40 to-black border border-indigo-500/20 p-12 md:p-16 rounded-[3rem] shadow-[0_0_100px_rgba(79,70,229,0.15)] relative overflow-hidden">
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
                         <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10 text-white leading-tight">

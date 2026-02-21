@@ -47,6 +47,8 @@ export async function POST(req: Request) {
         const creditsPurchased = parseInt(tags.credits || '0', 10);
         const userId = Object.keys(tags).length > 0 ? tags.userId : customerId; // Fallback if tags missing
         const referralCode = tags.referralCode;
+        const sourceCity = tags.sourceCity;
+        const sourceKeyword = tags.sourceKeyword;
 
         if (paymentData.payment_status === 'SUCCESS' && creditsPurchased > 0 && userId) {
 
@@ -65,7 +67,9 @@ export async function POST(req: Request) {
                 amount: amountInr.toString(),
                 creditsAdded: creditsPurchased,
                 gatewayTxnId: paymentData.cf_payment_id.toString(),
-                status: 'SUCCESS'
+                status: 'SUCCESS',
+                sourceCity: sourceCity || null,
+                sourceKeyword: sourceKeyword || null
             });
 
             // 1. Credit Balance Update

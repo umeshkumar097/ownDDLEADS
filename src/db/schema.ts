@@ -9,6 +9,7 @@ import {
   uuid,
   serial,
   numeric,
+  varchar,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
 
@@ -225,6 +226,8 @@ export const allTransactions = pgTable('all_transactions', {
   creditsAdded: integer('credits_added').notNull(),
   gatewayTxnId: text('gateway_txn_id'),
   status: text('status').notNull().default('SUCCESS'), // 'SUCCESS', 'FAILED', 'REFUNDED'
+  sourceCity: varchar('source_city', { length: 100 }), // Phase 14 Attribution
+  sourceKeyword: varchar('source_keyword', { length: 100 }), // Phase 14 Attribution
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -277,5 +280,34 @@ export const seoKeywords = pgTable('seo_keywords', {
   contextParagraph: text('context_paragraph'), // Paragraph about this SEO specific topic
   isActive: boolean('is_active').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// --- Phase 13: Resilience & Search Dominance ---
+export const systemHealthLogs = pgTable('system_health_logs', {
+  id: serial('id').primaryKey(),
+  errorType: varchar('error_type', { length: 100 }), // e.g., 'CLIENT_EXCEPTION', 'API_FAILURE'
+  errorMessage: text('error_message'),
+  urlAffected: text('url_affected'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// --- Phase 14: Sales Velocity & Re-engagement Hub ---
+
+export const leadMagnets = pgTable('lead_magnets', {
+  id: serial('id').primaryKey(),
+  userEmail: varchar('user_email', { length: 255 }),
+  sourceCity: varchar('source_city', { length: 100 }),
+  sourceKeyword: varchar('source_keyword', { length: 100 }),
+  isConverted: boolean('is_converted').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const automationLogs = pgTable('automation_logs', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').references(() => users.id),
+  channel: varchar('channel', { length: 20 }), // 'WHATSAPP', 'EMAIL'
+  messageType: varchar('message_type', { length: 50 }), // 'WELCOME', 'LOW_CREDIT', 'ABANDONED_CART'
+  sentAt: timestamp('sent_at').defaultNow().notNull(),
 });
 

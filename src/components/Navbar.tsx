@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
 
 export default function Navbar() {
     return (
@@ -9,7 +10,7 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Link href="/">
-                        <img src="/logo.png" alt="Aiclex | DhandaLeads" className="h-10 w-auto object-contain" />
+                        <Image src="/logo.png" width={200} height={40} priority={true} alt="Aiclex | DhandaLeads" className="h-10 w-auto object-contain" />
                     </Link>
                 </div>
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">

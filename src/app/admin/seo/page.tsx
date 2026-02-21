@@ -7,9 +7,11 @@ import {
     toggleSeoKeyword,
     updateSeoKeywordContext,
     addSeoCity,
-    addSeoKeyword
+    addSeoKeyword,
+    bulkAddSeoCities,
+    bulkAddSeoKeywords
 } from '@/app/admin/actions';
-import { MapPin, Key, Plus, Save, Power, PowerOff, Loader2 } from 'lucide-react';
+import { MapPin, Key, Plus, Save, Power, PowerOff, Loader2, ExternalLink, UploadCloud } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function SEOAdminPage() {
@@ -22,6 +24,9 @@ export default function SEOAdminPage() {
     const [newCityState, setNewCityState] = useState('');
     const [newKeyword, setNewKeyword] = useState('');
     const [newIntentHeadline, setNewIntentHeadline] = useState('');
+
+    const [bulkCitiesText, setBulkCitiesText] = useState('');
+    const [bulkKeywordsText, setBulkKeywordsText] = useState('');
 
     const [editingContextId, setEditingContextId] = useState<number | null>(null);
     const [editingContextValue, setEditingContextValue] = useState('');
@@ -105,6 +110,26 @@ export default function SEOAdminPage() {
         }
     };
 
+    const handleBulkCities = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!bulkCitiesText.trim()) return;
+        const loadingToast = toast.loading('Bulk adding cities...');
+        const res = await bulkAddSeoCities(bulkCitiesText);
+        toast.success(`Bulk Added ${res.count} Cities`, { id: loadingToast });
+        setBulkCitiesText('');
+        loadData();
+    };
+
+    const handleBulkKeywords = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!bulkKeywordsText.trim()) return;
+        const loadingToast = toast.loading('Bulk adding keywords...');
+        const res = await bulkAddSeoKeywords(bulkKeywordsText);
+        toast.success(`Bulk Added ${res.count} Keywords`, { id: loadingToast });
+        setBulkKeywordsText('');
+        loadData();
+    };
+
     if (isLoading) {
         return <div className="p-8 flex items-center justify-center min-h-screen text-slate-400"><Loader2 className="w-8 h-8 animate-spin" /></div>;
     }
@@ -147,6 +172,20 @@ export default function SEOAdminPage() {
                         </button>
                     </form>
 
+                    {/* Bulk Keyword Upload */}
+                    <form onSubmit={handleBulkKeywords} className="mb-8 bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col gap-3">
+                        <textarea
+                            placeholder="Format: Keyword1 | Headline1&#10;Keyword2 | Headline2"
+                            className="bg-slate-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 font-mono text-sm"
+                            rows={3}
+                            value={bulkKeywordsText}
+                            onChange={(e) => setBulkKeywordsText(e.target.value)}
+                        />
+                        <button type="submit" className="w-full bg-slate-800 hover:bg-indigo-600 border border-white/10 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <UploadCloud className="w-4 h-4" /> Bulk Upload Keywords
+                        </button>
+                    </form>
+
                     <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                         {keywords.map((kw) => (
                             <div key={kw.id} className="bg-slate-800/50 border border-white/5 rounded-xl p-4">
@@ -156,12 +195,17 @@ export default function SEOAdminPage() {
                                         <h3 className="font-bold text-white">{kw.keyword}</h3>
                                         <p className="text-sm text-slate-400 mt-1">H1: {kw.intentHeadline} <span className="text-indigo-300">in [City]</span></p>
                                     </div>
-                                    <button
-                                        onClick={() => handleKeywordToggle(kw.id, kw.isActive)}
-                                        className={`p-2 rounded-lg transition-colors ${kw.isActive ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'}`}
-                                    >
-                                        {kw.isActive ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <a href={`/solutions/${kw.slug}/india`} target="_blank" className="p-2 rounded-lg bg-white/5 text-slate-300 hover:text-white hover:bg-indigo-500/20 transition-colors" title="Live Preview">
+                                            <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                        <button
+                                            onClick={() => handleKeywordToggle(kw.id, kw.isActive)}
+                                            className={`p-2 rounded-lg transition-colors ${kw.isActive ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'}`}
+                                        >
+                                            {kw.isActive ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {editingContextId === kw.id ? (
@@ -219,6 +263,20 @@ export default function SEOAdminPage() {
                         />
                         <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 rounded-lg flex items-center justify-center transition-colors">
                             <Plus className="w-5 h-5" />
+                        </button>
+                    </form>
+
+                    {/* Bulk City Upload */}
+                    <form onSubmit={handleBulkCities} className="mb-8 bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col gap-3">
+                        <textarea
+                            placeholder="Format: City1, State1&#10;City2, State2"
+                            className="bg-slate-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 font-mono text-sm"
+                            rows={3}
+                            value={bulkCitiesText}
+                            onChange={(e) => setBulkCitiesText(e.target.value)}
+                        />
+                        <button type="submit" className="w-full bg-slate-800 hover:bg-emerald-600 border border-white/10 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <UploadCloud className="w-4 h-4" /> Bulk Upload Cities
                         </button>
                     </form>
 

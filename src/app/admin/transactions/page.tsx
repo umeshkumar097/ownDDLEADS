@@ -13,6 +13,8 @@ export default async function TransactionsPage() {
         creditsAdded: allTransactions.creditsAdded,
         gatewayTxnId: allTransactions.gatewayTxnId,
         status: allTransactions.status,
+        sourceCity: allTransactions.sourceCity,
+        sourceKeyword: allTransactions.sourceKeyword,
         createdAt: allTransactions.createdAt,
         userEmail: users.email,
         userName: users.name
@@ -78,6 +80,7 @@ export default async function TransactionsPage() {
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400">Date & Time</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400">User Identity</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400 text-center">Amount Paid</th>
+                                <th className="py-4 px-6 text-sm font-semibold text-slate-400 text-center">Attribution</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400 text-center">Gateway Txn ID</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400 text-right">Status</th>
                             </tr>
@@ -102,6 +105,16 @@ export default async function TransactionsPage() {
                                         <div className="text-xs text-indigo-400 font-bold tracking-widest uppercase mt-0.5">
                                             +{t.creditsAdded} Credits
                                         </div>
+                                    </td>
+                                    <td className="py-4 px-6 text-center">
+                                        {t.sourceCity ? (
+                                            <div className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-1 inline-block border border-emerald-500/20 rounded">
+                                                {t.sourceCity}
+                                                {t.sourceKeyword && <span className="opacity-70 ml-1">• {t.sourceKeyword}</span>}
+                                            </div>
+                                        ) : (
+                                            <span className="text-xs text-slate-500 italic">Direct / Direct API</span>
+                                        )}
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <span className="font-mono text-xs text-slate-500 bg-black/50 px-2 py-1 rounded border border-white/5">

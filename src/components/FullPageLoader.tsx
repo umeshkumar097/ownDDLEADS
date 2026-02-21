@@ -1,4 +1,5 @@
 import { Activity } from 'lucide-react';
+import Image from 'next/image';
 
 export default function FullPageLoader({ message = "Authenticating Command Center..." }: { message?: string }) {
     return (
@@ -9,7 +10,7 @@ export default function FullPageLoader({ message = "Authenticating Command Cente
 
                 {/* Core spinner / icon */}
                 <div className="relative z-10 bg-slate-900 border border-indigo-500/30 p-5 rounded-2xl shadow-[0_0_40px_rgba(79,70,229,0.3)]">
-                    <img src="/icon.png" alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
+                    <Image src="/icon.png" width={48} height={48} alt="Loading" className="w-12 h-12 object-contain animate-pulse" />
                 </div>
             </div>
 
