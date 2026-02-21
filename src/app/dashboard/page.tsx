@@ -37,6 +37,7 @@ function DashboardContent() {
     const [viewMode, setViewMode] = useState<'search' | 'list'>('list');
     const [nextPageToken, setNextPageToken] = useState<string | null>(null);
     const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+    const [showBulkConfirmModal, setShowBulkConfirmModal] = useState(false);
 
     // Protect route and load library
     useEffect(() => {
@@ -139,16 +140,18 @@ function DashboardContent() {
         }
     };
 
-    const handleBulkUnlock = async () => {
+    const handleBulkUnlock = () => {
         if (selectedLeads.size === 0) return;
         if (!selectedListId && !newListName) {
             toast.error('Please select or create a destination folder.');
             return;
         }
 
-        const confirmMsg = `You are about to unlock ${selectedLeads.size} leads. This will cost ${selectedLeads.size} credits (1 credit each) for non-Pro users. Proceed?`;
-        if (!confirm(confirmMsg)) return;
+        setShowBulkConfirmModal(true);
+    };
 
+    const executeBulkUnlock = async () => {
+        setShowBulkConfirmModal(false);
         const toastId = toast.loading(`Unlocking ${selectedLeads.size} leads...`);
 
         let successCount = 0;
@@ -581,6 +584,42 @@ function DashboardContent() {
                 </div>
             </main>
             <FloatingAIWidget leadsCount={leads.length} />
+
+            {/* Premium Bulk Confirm Modal */}
+            {showBulkConfirmModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+                    <div className="bg-slate-900 border border-slate-700/50 rounded-3xl max-w-md w-full p-8 shadow-2xl relative overflow-hidden">
+                        {/* Premium header accent */}
+                        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500"></div>
+
+                        <div className="mx-auto bg-indigo-500/10 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                            <Lock className="w-8 h-8 text-indigo-400" />
+                        </div>
+
+                        <h3 className="text-2xl font-bold text-white text-center mb-2">
+                            Confirm Bulk Extraction
+                        </h3>
+                        <p className="text-slate-400 text-center mb-8">
+                            You are about to unlock <span className="text-white font-bold">{selectedLeads.size}</span> high-quality verified leads. This will consume <span className="text-rose-400 font-bold">{selectedLeads.size} credits</span> from your balance.
+                        </p>
+
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setShowBulkConfirmModal(false)}
+                                className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={executeBulkUnlock}
+                                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3 px-4 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all flex items-center justify-center gap-2"
+                            >
+                                Proceed
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
