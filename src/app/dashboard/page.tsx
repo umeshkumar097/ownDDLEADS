@@ -36,6 +36,7 @@ function DashboardContent() {
     const [location, setLocation] = useState('');
     const [viewMode, setViewMode] = useState<'search' | 'list'>('list');
     const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+    const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
 
     // Protect route and load library
     useEffect(() => {
@@ -70,6 +71,7 @@ function DashboardContent() {
         if (!loadMoreToken) {
             setViewMode('search');
             setBulkLeads([]);
+            setSelectedLeads(new Set());
         }
         try {
             const res = await fetch('/api/search-audience', {
@@ -137,6 +139,78 @@ function DashboardContent() {
         }
     };
 
+    const handleBulkUnlock = async () => {
+        if (selectedLeads.size === 0) return;
+        if (!selectedListId && !newListName) {
+            toast.error('Please select or create a destination folder.');
+            return;
+        }
+
+        const confirmMsg = `You are about to unlock ${selectedLeads.size} leads. This will cost ${selectedLeads.size} credits (1 credit each) for non-Pro users. Proceed?`;
+        if (!confirm(confirmMsg)) return;
+
+        const toastId = toast.loading(`Unlocking ${selectedLeads.size} leads...`);
+
+        let successCount = 0;
+        let failCount = 0;
+        const leadsToUnlock = bulkLeads.filter(l => selectedLeads.has(l.id));
+
+        for (const bulkLead of leadsToUnlock) {
+            try {
+                const res = await fetch('/api/unlock-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        payload: bulkLead._rawPayload,
+                        listId: selectedListId || null,
+                        listName: newListName || null
+                    })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.lead) {
+                    successCount++;
+                    setBulkLeads(prev => prev.filter(l => l.id !== bulkLead.id));
+                    setLeads(prev => [data.lead, ...prev]);
+                } else {
+                    failCount++;
+                }
+            } catch (err) {
+                failCount++;
+            }
+        }
+
+        if (newListName && !selectedListId && successCount > 0) {
+            fetchLibrary();
+            setNewListName('');
+        }
+
+        setSelectedLeads(new Set());
+
+        if (successCount > 0) {
+            toast.success(`Successfully unlocked ${successCount} leads! ${failCount > 0 ? `(${failCount} failed)` : ''}`, { id: toastId });
+        } else {
+            toast.error(`Failed to unlock leads.`, { id: toastId });
+        }
+    };
+
+    const toggleLeadSelection = (leadId: string) => {
+        const newSelected = new Set(selectedLeads);
+        if (newSelected.has(leadId)) {
+            newSelected.delete(leadId);
+        } else {
+            newSelected.add(leadId);
+        }
+        setSelectedLeads(newSelected);
+    };
+
+    const toggleAllLeads = () => {
+        if (selectedLeads.size === bulkLeads.length && bulkLeads.length > 0) {
+            setSelectedLeads(new Set());
+        } else {
+            setSelectedLeads(new Set(bulkLeads.map(l => l.id)));
+        }
+    };
 
 
     const handleDeleteLead = async (leadId: string) => {
@@ -328,9 +402,19 @@ function DashboardContent() {
 
                     {/* View Toggles */}
                     <div className="flex flex-col sm:flex-row items-center justify-between pb-4 border-b border-white/10 gap-4">
-                        <h2 className="text-2xl font-bold flex items-center gap-2">
-                            {viewMode === 'search' ? 'Discovery Results' : 'Saved Leads'}
-                        </h2>
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                {viewMode === 'search' ? 'Discovery Results' : 'Saved Leads'}
+                            </h2>
+                            {viewMode === 'search' && selectedLeads.size > 0 && (
+                                <button
+                                    onClick={handleBulkUnlock}
+                                    className="text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl transition-all shadow-[0_0_15px_-5px_rgba(79,70,229,0.5)] flex items-center gap-2"
+                                >
+                                    <Lock className="w-4 h-4" /> Unlock Selected ({selectedLeads.size})
+                                </button>
+                            )}
+                        </div>
                         <div className="flex gap-4 items-center">
                             {viewMode === 'list' && displayedLeads.length > 0 && (
                                 <button onClick={handleExportCSV} className="flex items-center gap-2 text-sm font-semibold bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl transition-all">
@@ -351,6 +435,14 @@ function DashboardContent() {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
+                                            <th className="py-4 px-4 w-12 text-center text-sm font-medium text-slate-400">
+                                                <input
+                                                    type="checkbox"
+                                                    className="rounded border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 w-4 h-4 cursor-pointer"
+                                                    onChange={toggleAllLeads}
+                                                    checked={selectedLeads.size === bulkLeads.length && bulkLeads.length > 0}
+                                                />
+                                            </th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400">Prospect</th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400">Masked Contact</th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400 text-center">Data Points</th>
@@ -360,7 +452,7 @@ function DashboardContent() {
                                     <tbody className="divide-y divide-white/5">
                                         {bulkLeads.length === 0 ? (
                                             <tr>
-                                                <td colSpan={4} className="py-20 text-center text-slate-500">
+                                                <td colSpan={5} className="py-20 text-center text-slate-500">
                                                     <div className="flex flex-col items-center justify-center gap-3">
                                                         <SearchCode className="w-10 h-10 text-slate-800" />
                                                         <p>Run a Get Leads to extract up to 25 leads at once.</p>
@@ -369,7 +461,15 @@ function DashboardContent() {
                                             </tr>
                                         ) : (
                                             bulkLeads.map((lead) => (
-                                                <tr key={lead.id} className="hover:bg-indigo-900/10 transition-colors group">
+                                                <tr key={lead.id} className={`hover:bg-indigo-900/10 transition-colors group ${selectedLeads.has(lead.id) ? 'bg-indigo-900/20' : ''}`}>
+                                                    <td className="py-4 px-4 text-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="rounded border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 w-4 h-4 cursor-pointer"
+                                                            checked={selectedLeads.has(lead.id)}
+                                                            onChange={() => toggleLeadSelection(lead.id)}
+                                                        />
+                                                    </td>
                                                     <td className="py-4 px-6">
                                                         <div className="font-bold text-white mb-1">{lead.name}</div>
                                                         <div className="text-xs text-slate-400">{lead.role} @ {lead.company}</div>
@@ -398,7 +498,7 @@ function DashboardContent() {
                                         )}
                                         {nextPageToken && (
                                             <tr>
-                                                <td colSpan={4} className="py-8 text-center bg-white/[0.01]">
+                                                <td colSpan={5} className="py-8 text-center bg-white/[0.01]">
                                                     <button
                                                         onClick={() => handleSearch(nextPageToken)}
                                                         disabled={loading}
