@@ -18,6 +18,31 @@ export async function POST(req: Request) {
         const currency = targetCurrency || 'INR';
         let amount = priceInCents / 100;
 
+        // Fetch User Contact Data
+        const liveUser = await db.query.users.findFirst({
+            where: eq(users.id, session.user.id as string)
+        });
+
+        if (!liveUser) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        // Phase 17: Welcome Offer secure backend validation
+        let appliedWelcomeDiscount = false;
+        if (liveUser.emailVerified && priceInCents === 49900) { // Targeting the 499 Starter package
+            const transactions = await db.select().from(allTransactions).where(eq(allTransactions.userId, liveUser.id)).limit(1);
+            if (transactions.length === 0) {
+                const verifiedDate = new Date(liveUser.emailVerified).getTime();
+                const now = new Date().getTime();
+                const differenceHours = (now - verifiedDate) / (1000 * 60 * 60);
+
+                if (differenceHours < 24) {
+                    amount = amount * 0.5; // Apply 50% discount securely
+                    appliedWelcomeDiscount = true;
+                }
+            }
+        }
+
         // Auto-Calculate 18% GST for Indian Transactions
         // In real environments, sourceCountry would be detected via headers/IP
         const applyTax = currency === 'INR';
@@ -29,15 +54,6 @@ export async function POST(req: Request) {
         }
 
         const formattedAmount = amount.toFixed(2);
-
-        // Fetch User Contact Data
-        const liveUser = await db.query.users.findFirst({
-            where: eq(users.id, session.user.id as string)
-        });
-
-        if (!liveUser) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
 
         const orderId = `order_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
@@ -69,7 +85,8 @@ export async function POST(req: Request) {
                 planName: name,
                 sourceCity: sourceCity || "",
                 sourceKeyword: sourceKeyword || "",
-                taxApplied: taxAmount.toFixed(2)
+                taxApplied: taxAmount.toFixed(2),
+                welcomeOfferUsed: appliedWelcomeDiscount ? "TRUE" : "FALSE"
             }
         };
 

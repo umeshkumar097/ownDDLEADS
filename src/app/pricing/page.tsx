@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PricingClientAdapter from './PricingClientAdapter';
 import { db } from '@/db';
+import { Suspense } from 'react';
 
 export const revalidate = 60; // Cache pricing details for 60 seconds
 
@@ -21,7 +22,9 @@ export default async function PricingPage() {
             </div>
 
             {/* Client Component passing Server Data */}
-            <PricingClientAdapter plans={plans} />
+            <Suspense fallback={<div className="text-center text-slate-500 py-10">Loading plans...</div>}>
+                <PricingClientAdapter plans={plans} />
+            </Suspense>
 
             <Footer />
         </div>

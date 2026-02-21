@@ -10,6 +10,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import DashboardStats from '@/components/DashboardStats';
 import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
+import WelcomeOfferPopup from '@/components/WelcomeOfferPopup';
 
 export default function DashboardPage() {
     return (
@@ -30,6 +31,7 @@ function DashboardContent() {
     const [selectedListId, setSelectedListId] = useState<string>('');
     const [newListName, setNewListName] = useState<string>('');
     const [credits, setCredits] = useState<number | string>('...');
+    const [userData, setUserData] = useState<{ emailVerified: string | null, hasPurchased: boolean } | null>(null);
 
     const [loading, setLoading] = useState(false);
     const [jobRole, setJobRole] = useState('');
@@ -60,6 +62,10 @@ function DashboardContent() {
                 setLists(data.lists);
                 setLeads(data.leads);
                 setCredits(data.credits);
+                setUserData({
+                    emailVerified: data.user?.emailVerified || null,
+                    hasPurchased: data.user?.hasPurchased || false
+                });
                 if (data.lists.length > 0) setSelectedListId(data.lists[0].id);
             }
         } catch (e) {
@@ -619,6 +625,14 @@ function DashboardContent() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Phase 17 Welcome Offer */}
+            {userData?.emailVerified && (
+                <WelcomeOfferPopup
+                    hasPurchased={userData.hasPurchased}
+                    emailVerifiedAt={userData.emailVerified}
+                />
             )}
         </div>
     );

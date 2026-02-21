@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/db';
-import { lists, leads, creditsBalance, users } from '@/db/schema';
+import { lists, leads, creditsBalance, users, allTransactions } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
 export async function GET(req: Request) {
@@ -37,7 +37,20 @@ export async function GET(req: Request) {
             }
         }
 
-        return NextResponse.json({ success: true, lists: userLists, leads: userLeads, credits: availableCredits });
+        // Phase 17: Welcome Offer Status
+        const transactions = await db.select().from(allTransactions).where(eq(allTransactions.userId, userId)).limit(1);
+        const hasPurchased = transactions.length > 0;
+
+        return NextResponse.json({
+            success: true,
+            lists: userLists,
+            leads: userLeads,
+            credits: availableCredits,
+            user: {
+                emailVerified: userRole?.emailVerified,
+                hasPurchased: hasPurchased
+            }
+        });
 
     } catch (error: any) {
         console.error("Fetch Library Error:", error);

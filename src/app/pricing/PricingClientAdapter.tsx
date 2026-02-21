@@ -1,13 +1,15 @@
 'use client';
 
 import { Activity } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 import { load } from '@cashfreepayments/cashfree-js';
 
 export default function PricingClientAdapter({ plans }: { plans: any[] }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const isWelcomeOffer = searchParams.get('welcome_offer') === 'true';
 
     const handleSubscribe = async (creditAmount: number, priceInCents: number, name: string) => {
         const toastId = toast.loading('Initializing Secure Checkout...');
@@ -73,7 +75,18 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
                             )}
 
                             <h2 className={`text-2xl font-bold mb-2 ${isPopular ? 'text-white' : 'text-slate-300'}`}>{plan.planName}</h2>
-                            <div className={`text-5xl font-black mb-2 ${isPopular ? 'text-white' : 'text-slate-100'}`}>₹{plan.priceInINR.toLocaleString()}</div>
+                            <div className={`text-5xl font-black mb-2 ${isPopular ? 'text-white' : 'text-slate-100'}`}>
+                                {isWelcomeOffer && plan.priceInINR === 499 ? (
+                                    <>
+                                        <span className="text-3xl text-slate-500 line-through mr-3">₹{plan.priceInINR.toLocaleString()}</span>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                                            ₹{Math.floor(plan.priceInINR * 0.5).toLocaleString()}
+                                        </span>
+                                    </>
+                                ) : (
+                                    `₹${plan.priceInINR.toLocaleString()}`
+                                )}
+                            </div>
                             <p className={`text-sm mb-8 ${isPopular ? 'text-indigo-300' : 'text-slate-500'}`}>
                                 {isPopular ? "Best value for growing agencies" : "Scalable outreach infrastructure"}
                             </p>
@@ -94,7 +107,7 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
                                 onClick={() => handleSubscribe(plan.creditsAwarded, plan.priceInINR * 100, `${plan.planName} (${plan.creditsAwarded} Credits)`)}
                                 className={btnClass}
                             >
-                                Buy Now
+                                {isWelcomeOffer && plan.priceInINR === 499 ? 'Claim 50% Off Now' : 'Buy Now'}
                             </button>
                         </div>
                     );
