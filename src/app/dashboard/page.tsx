@@ -193,8 +193,11 @@ function DashboardContent() {
                     </div>
                     <div className="flex items-center gap-4 md:gap-6">
                         <span className="text-sm text-slate-400 hidden sm:inline-block">Welcome, <span className="text-white font-medium">{session?.user?.name || 'User'}</span></span>
-                        <button onClick={() => router.push('/dashboard/partnership')} className="text-sm font-bold px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 rounded-full flex items-center gap-2 transition-all">
+                        <button onClick={() => router.push('/dashboard/partnership')} className="text-sm font-bold px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 rounded-full hidden md:flex items-center gap-2 transition-all">
                             Affiliate 🔥
+                        </button>
+                        <button onClick={() => router.push('/dashboard/api-keys')} className="text-sm font-medium px-4 py-2 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-full transition-all flex items-center gap-2 hidden lg:flex">
+                            <Lock className="w-4 h-4" /> API Keys
                         </button>
                         <button onClick={() => router.push('/dashboard/wallet')} className="text-sm font-medium px-4 py-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-full transition-all">
                             Load Credits
