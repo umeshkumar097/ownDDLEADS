@@ -24,7 +24,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DynamicHeroText from '@/components/DynamicHeroText';
 import { Toaster } from 'react-hot-toast';
-import TrustWallToast from '@/components/TrustWallToast';
 
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
@@ -43,7 +42,6 @@ export default function Home() {
 
       <Navbar />
       <Toaster position="bottom-left" />
-      <TrustWallToast />
 
       {/* 1. Hero Section (The Hook) */}
       <header className="relative pt-24 pb-20 overflow-hidden">

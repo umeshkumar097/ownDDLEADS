@@ -4,7 +4,6 @@ import Footer from '@/components/Footer';
 import { Metadata } from 'next';
 import { CheckCircle2, XCircle, ArrowRight, Zap, Target, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import TrustWallToast from '@/components/TrustWallToast';
 import { Toaster } from 'react-hot-toast';
 
 // Simulating a database/CMS entry for competitors to avoid extensive DB migrations immediately.
@@ -60,7 +59,6 @@ export default async function ComparePage({ params }: { params: Promise<{ compet
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30">
             <Navbar />
             <Toaster position="bottom-left" />
-            <TrustWallToast />
 
             <main>
                 {/* Hero Section */}

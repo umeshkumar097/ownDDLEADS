@@ -114,6 +114,10 @@ function LoginContent() {
                             </div>
                         </div>
 
+                        <div className="text-xs text-slate-500 text-center mt-4 mb-2">
+                            By logging in, you agree to our <Link href="/terms" className="text-indigo-400 hover:underline">Terms of Use</Link> and <Link href="/privacy" className="text-indigo-400 hover:underline">Privacy Policy</Link>.
+                        </div>
+
                         <button disabled={loading || !mounted} type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg mt-6 flex justify-center items-center gap-2">
                             {loading ? 'Authenticating...' : <>Log In <ArrowRight className="w-5 h-5" /></>}
                         </button>

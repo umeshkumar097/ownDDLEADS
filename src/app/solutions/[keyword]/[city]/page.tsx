@@ -186,7 +186,6 @@ export default async function DynamicSEOLandingPage({ params, searchParams }: { 
             <main className="flex-1">
                 <ExitIntentPopup city={city.name} keyword={keyword.keyword} />
                 <Toaster position="bottom-left" />
-                <TrustWallToast />
 
                 {/* Hero Section */}
                 <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-32 px-6">
