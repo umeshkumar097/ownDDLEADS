@@ -202,3 +202,102 @@ export async function updatePricingPlan(id: number, data: { planName: string, pr
 
     return { success: true };
 }
+
+// 6. Phase 11: SEO Engine Administration
+export async function getSeoMetadata() {
+    await verifyAdmin();
+    const { seoCities, seoKeywords } = await import('@/db/schema');
+
+    const cities = await db.select().from(seoCities).orderBy(seoCities.name);
+    const keywords = await db.select().from(seoKeywords).orderBy(seoKeywords.keyword);
+
+    return { cities, keywords };
+}
+
+export async function toggleSeoCity(id: number, currentStatus: boolean) {
+    const adminId = await verifyAdmin();
+    const { seoCities } = await import('@/db/schema');
+
+    await db.update(seoCities).set({ isActive: !currentStatus }).where(eq(seoCities.id, id));
+
+    await db.insert(adminAuditLogs).values({
+        adminId,
+        actionType: 'SEO_CITY_TOGGLE',
+        description: `Toggled City ID #${id} to ${!currentStatus}`
+    });
+    return { success: true };
+}
+
+export async function toggleSeoKeyword(id: number, currentStatus: boolean) {
+    const adminId = await verifyAdmin();
+    const { seoKeywords } = await import('@/db/schema');
+
+    await db.update(seoKeywords).set({ isActive: !currentStatus }).where(eq(seoKeywords.id, id));
+
+    await db.insert(adminAuditLogs).values({
+        adminId,
+        actionType: 'SEO_KEYWORD_TOGGLE',
+        description: `Toggled Keyword ID #${id} to ${!currentStatus}`
+    });
+    return { success: true };
+}
+
+export async function updateSeoKeywordContext(id: number, contextParagraph: string) {
+    const adminId = await verifyAdmin();
+    const { seoKeywords } = await import('@/db/schema');
+
+    await db.update(seoKeywords).set({ contextParagraph }).where(eq(seoKeywords.id, id));
+
+    await db.insert(adminAuditLogs).values({
+        adminId,
+        actionType: 'SEO_CONTEXT_UPDATE',
+        description: `Updated context paragraph for Keyword ID #${id}`
+    });
+    return { success: true };
+}
+
+export async function addSeoCity(name: string, state: string) {
+    const adminId = await verifyAdmin();
+    const { seoCities } = await import('@/db/schema');
+
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    try {
+        await db.insert(seoCities).values({ name, slug, state, isActive: true });
+
+        await db.insert(adminAuditLogs).values({
+            adminId,
+            actionType: 'SEO_CITY_ADD',
+            description: `Added new SEO City: ${name}`
+        });
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
+}
+
+export async function addSeoKeyword(keyword: string, intentHeadline: string) {
+    const adminId = await verifyAdmin();
+    const { seoKeywords } = await import('@/db/schema');
+
+    const slug = keyword.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    try {
+        await db.insert(seoKeywords).values({
+            keyword,
+            slug,
+            intentHeadline,
+            contextParagraph: '',
+            isActive: true
+        });
+
+        await db.insert(adminAuditLogs).values({
+            adminId,
+            actionType: 'SEO_KEYWORD_ADD',
+            description: `Added new SEO Keyword: ${keyword}`
+        });
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
+}

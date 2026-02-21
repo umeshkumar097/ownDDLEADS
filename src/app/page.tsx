@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import DynamicHeroText from '@/components/DynamicHeroText';
 
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
@@ -48,14 +49,7 @@ export default function Home() {
             Powered by Aiclex Technologies AI
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-indigo-950 leading-[1.1] max-w-5xl mx-auto">
-            Ab Har Indian Business Banega International Brand.<br />
-            <span className="text-emerald-700">Get 10x Quality Leads on Autopilot.</span>
-          </h1>
-
-          <p className="text-lg md:text-2xl text-slate-600 max-w-2xl mx-auto mb-10">
-            Stop chasing dead numbers. Leverage enterprise-grade AI to find, verify, and connect with decision-makers directly on WhatsApp.
-          </p>
+          <DynamicHeroText />
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-12">
             <Link

@@ -257,3 +257,25 @@ export const pricingPlans = pgTable('pricing_plans', {
   features: text('features').array(), // JSON or Array of features for the UI
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+// --- Phase 11: Hyper-Local Dynamic SEO Engine ---
+
+export const seoCities = pgTable('seo_cities', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(), // e.g., "Noida"
+  slug: text('slug').notNull().unique(), // e.g., "noida"
+  state: text('state').notNull(),        // e.g., "Uttar Pradesh"
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const seoKeywords = pgTable('seo_keywords', {
+  id: serial('id').primaryKey(),
+  keyword: text('keyword').notNull().unique(), // e.g., "Lead Generation Company"
+  slug: text('slug').notNull().unique(),       // e.g., "lead-generation-company"
+  intentHeadline: text('intent_headline'),     // e.g., "The #1 B2B Lead Generation Company"
+  contextParagraph: text('context_paragraph'), // Paragraph about this SEO specific topic
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
