@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { db } from '@/db';
-import { seoCities, seoKeywords } from '@/db/schema';
+import { seoCities, seoKeywords, seoTranslations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -36,9 +36,10 @@ export async function generateStaticParams() {
 }
 
 // 2. Dynamic Metadata Injection
-export async function generateMetadata({ params }: { params: Promise<{ keyword: string, city: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ keyword: string, city: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
     const resolvedParams = await params;
-    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
+    const resolvedSearchParams = await searchParams;
+    let keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
     const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
     if (!keywordData.length || !cityData.length) {
@@ -51,9 +52,28 @@ export async function generateMetadata({ params }: { params: Promise<{ keyword: 
     const keyword = keywordData[0];
     const city = cityData[0];
 
+    // Translation Override Check
+    let intentHeadline = keyword.intentHeadline;
+    let contextParagraph = keyword.contextParagraph;
+
+    if (resolvedSearchParams.lang && typeof resolvedSearchParams.lang === 'string') {
+        const translation = await db.select()
+            .from(seoTranslations)
+            .where(
+                and(
+                    eq(seoTranslations.keywordId, keyword.id),
+                    eq(seoTranslations.languageCode, resolvedSearchParams.lang)
+                )
+            ).limit(1);
+        if (translation.length > 0) {
+            intentHeadline = translation[0].translatedTitle;
+            contextParagraph = translation[0].translatedContent;
+        }
+    }
+
     // E.g. "Top Rated B2B Lead Generation Tools in Mumbai | DhandaLeads"
-    const title = `${keyword.intentHeadline} in ${city.name} | DhandaLeads`;
-    const description = `Looking for the best ${keyword.keyword.toLowerCase()} in ${city.name}? ${keyword.contextParagraph || 'Discover highly targeted B2B data specific to your location today.'}`;
+    const title = `${intentHeadline} in ${city.name} | DhandaLeads`;
+    const description = `Looking for the best ${keyword.keyword.toLowerCase()} in ${city.name}? ${contextParagraph || 'Discover highly targeted B2B data specific to your location today.'}`;
 
     return {
         title,
@@ -65,8 +85,9 @@ export async function generateMetadata({ params }: { params: Promise<{ keyword: 
     };
 }
 
-export default async function DynamicSEOLandingPage({ params }: { params: Promise<{ keyword: string, city: string }> }) {
+export default async function DynamicSEOLandingPage({ params, searchParams }: { params: Promise<{ keyword: string, city: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const resolvedParams = await params;
+    const resolvedSearchParams = await searchParams;
     const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
     const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
@@ -89,8 +110,27 @@ export default async function DynamicSEOLandingPage({ params }: { params: Promis
         }
     }
 
+    // Translation Override Check
+    let intentHeadline = keyword.intentHeadline;
+    let contextParagraph = keyword.contextParagraph;
+
+    if (resolvedSearchParams.lang && typeof resolvedSearchParams.lang === 'string') {
+        const translation = await db.select()
+            .from(seoTranslations)
+            .where(
+                and(
+                    eq(seoTranslations.keywordId, keyword.id),
+                    eq(seoTranslations.languageCode, resolvedSearchParams.lang)
+                )
+            ).limit(1);
+        if (translation.length > 0) {
+            intentHeadline = translation[0].translatedTitle;
+            contextParagraph = translation[0].translatedContent;
+        }
+    }
+
     // Build the dynamic variables
-    const heroSubheadline = keyword.contextParagraph || `Supercharge your B2B sales in ${city.name} with precise, verified data tailored for your precise ideal customer profile.`;
+    const heroSubheadline = contextParagraph || `Supercharge your B2B sales in ${city.name} with precise, verified data tailored for your precise ideal customer profile.`;
     const trustSignal = `Trusted by over 500+ Businesses scaling locally in ${city.name}, ${city.state}.`;
 
     // Build JSON-LD FAQs
@@ -152,7 +192,7 @@ export default async function DynamicSEOLandingPage({ params }: { params: Promis
                         </div>
 
                         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
-                            {keyword.intentHeadline} <br className="hidden md:block" />
+                            {intentHeadline} <br className="hidden md:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-indigo-400 flex items-center justify-center gap-2 mt-2">
                                 in {city.name}
                             </span>
