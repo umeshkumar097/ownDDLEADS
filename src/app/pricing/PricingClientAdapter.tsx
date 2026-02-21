@@ -33,7 +33,7 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
             if (data.payment_session_id) {
                 toast.success('Gateway secured. Redirecting...', { id: toastId });
                 const cashfree = await load({
-                    mode: "sandbox"
+                    mode: "production"
                 });
 
                 await cashfree.checkout({
