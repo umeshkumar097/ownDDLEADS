@@ -13,10 +13,22 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { creditAmount, priceInCents, name, sourceCity, sourceKeyword } = body;
+        const { creditAmount, priceInCents, name, sourceCity, sourceKeyword, targetCurrency } = body;
 
-        // Cashfree requires amount in decimals (e.g. 999.00), not cents
-        const amountInINR = (priceInCents / 100).toFixed(2);
+        const currency = targetCurrency || 'INR';
+        let amount = priceInCents / 100;
+
+        // Auto-Calculate 18% GST for Indian Transactions
+        // In real environments, sourceCountry would be detected via headers/IP
+        const applyTax = currency === 'INR';
+        let taxAmount = 0;
+
+        if (applyTax) {
+            taxAmount = amount * 0.18;
+            amount = amount + taxAmount;
+        }
+
+        const formattedAmount = amount.toFixed(2);
 
         // Fetch User Contact Data
         const liveUser = await db.query.users.findFirst({
@@ -36,8 +48,8 @@ export async function POST(req: Request) {
         const secureBaseUrl = isLocalhost ? 'https://dhandaleads.com' : baseUrl;
 
         const payload = {
-            order_amount: parseFloat(amountInINR),
-            order_currency: "INR",
+            order_amount: parseFloat(formattedAmount),
+            order_currency: currency,
             order_id: orderId,
             customer_details: {
                 customer_id: liveUser.id.substring(0, 40), // Cashfree max length limit
@@ -56,7 +68,8 @@ export async function POST(req: Request) {
                 userId: liveUser.id,
                 planName: name,
                 sourceCity: sourceCity || "",
-                sourceKeyword: sourceKeyword || ""
+                sourceKeyword: sourceKeyword || "",
+                taxApplied: taxAmount.toFixed(2)
             }
         };
 
@@ -81,7 +94,7 @@ export async function POST(req: Request) {
         // Phase 14: Log PENDING checkout for abandoned cart recovery
         await db.insert(allTransactions).values({
             userId: liveUser.id,
-            amount: parseFloat(amountInINR).toString(),
+            amount: parseFloat(formattedAmount).toString(),
             creditsAdded: creditAmount,
             gatewayTxnId: orderId, // Store our local orderId temporarily
             status: 'PENDING',
