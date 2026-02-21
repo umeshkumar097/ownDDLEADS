@@ -1,19 +1,17 @@
 import Link from 'next/link';
-import { db } from '@/db';
-import { seoCities, seoKeywords } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
-export default async function Footer() {
-    let topCities: { name: string, slug: string }[] = [];
-    let defaultKeyword = 'lead-generation-company';
-
-    try {
-        topCities = await db.select({ name: seoCities.name, slug: seoCities.slug }).from(seoCities).where(eq(seoCities.isActive, true)).limit(8);
-        const keywordData = await db.select({ slug: seoKeywords.slug }).from(seoKeywords).where(eq(seoKeywords.isActive, true)).limit(1);
-        if (keywordData.length > 0) defaultKeyword = keywordData[0].slug;
-    } catch (e) {
-        // Safe fallback for build time
-    }
+export default function Footer() {
+    const topCities = [
+        { name: 'Mumbai', slug: 'mumbai' },
+        { name: 'Delhi', slug: 'delhi' },
+        { name: 'Bengaluru', slug: 'bengaluru' },
+        { name: 'Hyderabad', slug: 'hyderabad' },
+        { name: 'Chennai', slug: 'chennai' },
+        { name: 'Kolkata', slug: 'kolkata' },
+        { name: 'Pune', slug: 'pune' },
+        { name: 'Ahmedabad', slug: 'ahmedabad' }
+    ];
+    const defaultKeyword = 'lead-generation-company';
 
     return (
         <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 relative z-20">

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -8,6 +9,14 @@ import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Loading...</div>}>
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { data: session, status } = useSession();
@@ -16,6 +25,11 @@ export default function LoginPage() {
         email: '',
         password: '',
     });
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (searchParams?.get('registered') === 'true') {
@@ -60,6 +74,8 @@ export default function LoginPage() {
             setLoading(false);
         } else {
             toast.success('Login successful!', { id: toastId });
+            // Clean up the URL in case the user arrived here with query params previously
+            window.history.replaceState({}, document.title, window.location.pathname);
             router.push('/dashboard');
         }
     };
@@ -72,13 +88,13 @@ export default function LoginPage() {
             <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-12">
                 <div className="max-w-md w-full mx-auto">
                     <Link href="/">
-                        <img src="/logo.png" alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
+                        <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
                     </Link>
 
                     <h1 className="text-3xl font-extrabold text-white mb-2">Welcome Back</h1>
                     <p className="text-slate-400 mb-8">Login to your command center.</p>
 
-                    <form onSubmit={handleLogin} className="space-y-5">
+                    <form onSubmit={handleLogin} method="POST" className="space-y-5">
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-1">Email Address</label>
                             <div className="relative">
@@ -98,7 +114,7 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <button disabled={loading} type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg mt-6 flex justify-center items-center gap-2">
+                        <button disabled={loading || !mounted} type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg mt-6 flex justify-center items-center gap-2">
                             {loading ? 'Authenticating...' : <>Log In <ArrowRight className="w-5 h-5" /></>}
                         </button>
                     </form>

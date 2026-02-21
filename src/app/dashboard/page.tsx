@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Search, Users, SearchCode, Lock, Building2, PhoneCall, Mail, ExternalLink, Download, LayoutGrid, CheckCircle2, ChevronRight, Activity, FolderPlus, Trash2 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -188,7 +189,7 @@ function DashboardContent() {
             <nav className="border-b border-white/10 bg-black/20 backdrop-blur-lg fixed top-0 w-full z-10 transition-all">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center">
-                        <img src="/logo.png" alt="DhandaLeads" className="h-8 w-auto object-contain cursor-pointer transform hover:scale-105 transition-transform" />
+                        <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-8 w-auto object-contain cursor-pointer transform hover:scale-105 transition-transform" />
                     </div>
                     <div className="flex items-center gap-4 md:gap-6">
                         <span className="text-sm text-slate-400 hidden sm:inline-block">Welcome, <span className="text-white font-medium">{session?.user?.name || 'User'}</span></span>

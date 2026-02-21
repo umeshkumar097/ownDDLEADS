@@ -58,7 +58,7 @@ export async function POST(req: Request) {
             }
         };
 
-        const response = await fetch('https://sandbox.cashfree.com/pg/orders', {
+        const response = await fetch('https://api.cashfree.com/pg/orders', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
 
         if (!response.ok) {
             console.error("Cashfree Order Create Error:", data);
-            return NextResponse.json({ error: 'Failed to create Cashfree order', details: data }, { status: response.status });
+            return NextResponse.json({ error: 'Failed to create Cashfree order', details: data }, { status: 400 });
         }
 
         return NextResponse.json({ payment_session_id: data.payment_session_id, order_id: orderId });

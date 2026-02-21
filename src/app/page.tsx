@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {
   Zap,
   ShieldCheck,
@@ -65,10 +66,10 @@ export default function Home() {
 
           <div className="flex items-center justify-center gap-2 text-sm font-bold text-slate-500 mb-16">
             <div className="flex -space-x-2 relative z-10">
-              <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-              <img src="https://randomuser.me/api/portraits/women/60.jpg" alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-              <img src="https://randomuser.me/api/portraits/men/71.jpg" alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-              <img src="https://randomuser.me/api/portraits/women/72.jpg" alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+              <Image src="https://randomuser.me/api/portraits/men/44.jpg" width={32} height={32} alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+              <Image src="https://randomuser.me/api/portraits/women/60.jpg" width={32} height={32} alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+              <Image src="https://randomuser.me/api/portraits/men/71.jpg" width={32} height={32} alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+              <Image src="https://randomuser.me/api/portraits/women/72.jpg" width={32} height={32} alt="User" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
               <div className="w-8 h-8 rounded-full border-2 border-slate-100 bg-emerald-50 flex items-center justify-center text-[10px] font-bold text-emerald-600">500+</div>
             </div>
             <span className="ml-2">Trusted by 500+ Indian Entrepreneurs & Agencies</span>

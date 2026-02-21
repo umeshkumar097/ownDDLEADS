@@ -1,12 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Lock, ArrowRight } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function GodEyeLogin() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-emerald-500 font-mono tracking-widest text-sm uppercase">Loading Secured Node...</div>}>
+            <GodEyeContent />
+        </Suspense>
+    );
+}
+
+function GodEyeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);

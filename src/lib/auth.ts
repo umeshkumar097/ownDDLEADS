@@ -67,17 +67,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             if (user) {
                 token.id = user.id;
             }
-            // Add a db check on jwt token to ensure banned users are force-kicked on next request
-            // This happens periodically or whenever session syncs
-            if (token.id) {
-                const liveUser = await db.query.users.findFirst({
-                    where: eq(users.id, token.id as string)
-                });
 
-                if (liveUser?.isBanned) {
-                    throw new Error("Account Banned."); // Causes session validation to fail
-                }
-            }
+            // We removed the inline `db.query` check here because running a database
+            // hit on EVERY SINGLE authenticated request (next.js edge hydration) 
+            // exhausts the connection pool and creates a sweeping ETIMEDOUT Server Error loop.
+            // Banned status is correctly intercepted at initial login via authorize().
 
             return token;
         },

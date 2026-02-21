@@ -1,5 +1,6 @@
 import { db } from '@/db';
 import { emailLogs } from '@/db/schema';
+import nodemailer from 'nodemailer';
 
 export async function sendTransactionalEmail({
     to,
@@ -12,46 +13,34 @@ export async function sendTransactionalEmail({
     htmlContent: string;
     senderName?: string;
 }) {
-    const BREVO_API_KEY = process.env.BREVO_API_KEY;
-    const SENDER_EMAIL = 'info@dhandaleads.com';
+    const BREVO_LOGIN = process.env.BREVO_SMTP_LOGIN || '9fbca6001@smtp-brevo.com'; // Fallback to provided defaults if missing
+    const BREVO_PASSWORD = process.env.BREVO_API_KEY; // API keys act as SMTP passwords in Brevo
+    const SENDER_EMAIL = 'no-reply@dhandaleads.com';
 
-    if (!BREVO_API_KEY) {
-        console.error('Missing BREVO_API_KEY in environment variables.');
+    if (!BREVO_PASSWORD) {
+        console.error('Missing BREVO_API_KEY / SMTP Password in environment variables.');
         return false;
     }
 
     try {
-        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'api-key': BREVO_API_KEY,
+        const transporter = nodemailer.createTransport({
+            host: 'smtp-relay.brevo.com',
+            port: 587,
+            secure: false, // true for 465, false for 587
+            auth: {
+                user: BREVO_LOGIN,
+                pass: BREVO_PASSWORD,
             },
-            body: JSON.stringify({
-                sender: { email: SENDER_EMAIL, name: senderName },
-                to,
-                subject,
-                htmlContent,
-            }),
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Brevo API Error:', errorText);
+        const toAddresses = to.map(t => t.name ? `${t.name} <${t.email}>` : t.email).join(', ');
 
-            // Log Failure
-            for (const recipient of to) {
-                await db.insert(emailLogs).values({
-                    recipientEmail: recipient.email,
-                    subject: subject,
-                    status: 'failed',
-                    errorDetails: errorText
-                }).catch(e => console.error("Could not write email log:", e));
-            }
-
-            return false;
-        }
+        const info = await transporter.sendMail({
+            from: `"${senderName}" <${SENDER_EMAIL}>`,
+            to: toAddresses,
+            subject: subject,
+            html: htmlContent,
+        });
 
         // Log Success
         for (const recipient of to) {
@@ -59,13 +48,13 @@ export async function sendTransactionalEmail({
                 recipientEmail: recipient.email,
                 subject: subject,
                 status: 'sent',
-                errorDetails: null
-            }).catch(e => console.error("Could not write email log:", e));
+                errorDetails: info.messageId
+            }).catch(e => console.error("Could not write email success log:", e));
         }
 
         return true;
     } catch (error: any) {
-        console.error('Failed to send email via Brevo:', error);
+        console.error('Failed to send email via Brevo SMTP:', error);
 
         // Log Critical Exception
         for (const recipient of to) {
@@ -73,8 +62,8 @@ export async function sendTransactionalEmail({
                 recipientEmail: recipient.email,
                 subject: subject,
                 status: 'failed',
-                errorDetails: error?.message || 'Unknown network error'
-            }).catch(e => console.error("Could not write email log:", e));
+                errorDetails: error?.message || 'Unknown SMTP error'
+            }).catch(e => console.error("Could not write email failure log:", e));
         }
 
         return false;

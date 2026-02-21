@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, ArrowRight, ShieldCheck } from 'lucide-react';
@@ -39,7 +40,7 @@ export default function ForgotPasswordPage() {
         <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center text-white font-sans selection:bg-indigo-500/30 px-6">
             <Toaster position="bottom-right" />
             <Link href="/">
-                <img src="/logo.png" alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
+                <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
             </Link>
 
             <div className="bg-slate-900 border border-white/10 p-10 rounded-3xl max-w-md w-full shadow-xl">

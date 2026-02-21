@@ -1,11 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 export default function VerifyPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Verifying...</div>}>
+            <VerifyContent />
+        </Suspense>
+    );
+}
+
+function VerifyContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -48,7 +57,7 @@ export default function VerifyPage() {
     return (
         <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center text-white font-sans selection:bg-indigo-500/30 px-6">
             <Link href="/">
-                <img src="/logo.png" alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
+                <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-10 w-auto mb-12 hover:opacity-80 transition cursor-pointer" />
             </Link>
 
             <div className="bg-slate-900 border border-white/10 p-10 rounded-3xl max-w-md w-full text-center shadow-xl">

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     LayoutDashboard,
     Users,
@@ -39,13 +40,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         redirect(`/dashboard?error=UnauthorizedAdmin&t=${Date.now()}`);
     }
 
+    if (!liveServerUser.emailVerified) {
+        redirect('/verify-email');
+    }
+
     return (
         <div className="min-h-screen flex bg-slate-950 text-slate-300 font-sans selection:bg-emerald-500/30">
             {/* Sidebar (Dark Emerald Theme) */}
             <aside className="w-64 bg-slate-900 border-r border-white/10 flex flex-col fixed inset-y-0 shadow-2xl z-10">
                 <div className="p-6 border-b border-white/10">
                     <div className="flex items-center gap-3 mb-2">
-                        <img src="/logo.png" alt="DhandaLeads Admin" className="h-8 object-contain filter invert opacity-90" />
+                        <Image src="/logo.png" width={160} height={40} alt="DhandaLeads Admin" className="h-8 object-contain filter invert opacity-90" />
                     </div>
                     <p className="text-xs font-mono text-emerald-500 font-bold uppercase tracking-widest bg-emerald-950/50 inline-block px-2 py-0.5 rounded border border-emerald-500/20">Control Tower</p>
                 </div>

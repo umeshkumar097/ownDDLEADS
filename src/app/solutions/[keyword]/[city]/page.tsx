@@ -31,9 +31,10 @@ export async function generateStaticParams() {
 }
 
 // 2. Dynamic Metadata Injection
-export async function generateMetadata({ params }: { params: { keyword: string, city: string } }): Promise<Metadata> {
-    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, params.keyword)).limit(1);
-    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, params.city)).limit(1);
+export async function generateMetadata({ params }: { params: Promise<{ keyword: string, city: string }> }): Promise<Metadata> {
+    const resolvedParams = await params;
+    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
+    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
     if (!keywordData.length || !cityData.length) return {};
 
@@ -54,9 +55,10 @@ export async function generateMetadata({ params }: { params: { keyword: string, 
     };
 }
 
-export default async function DynamicSEOLandingPage({ params }: { params: { keyword: string, city: string } }) {
-    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, params.keyword)).limit(1);
-    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, params.city)).limit(1);
+export default async function DynamicSEOLandingPage({ params }: { params: Promise<{ keyword: string, city: string }> }) {
+    const resolvedParams = await params;
+    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
+    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
 
     if (!keywordData.length || !cityData.length) {
         notFound();

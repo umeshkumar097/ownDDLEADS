@@ -5,8 +5,6 @@ import Providers from "@/components/Providers";
 import BroadcastBanner from "@/components/BroadcastBanner";
 import Script from "next/script";
 
-export const dynamic = "force-dynamic";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dhandaleads.com"),
   title: "DhandaLeads | B2B Leads Generation & High Quality Leads",
   description: "The smartest B2B data engine for Indian businesses. Find, verify, and close leads on autopilot. Buy HNI leads and organic leads generation.",
   keywords: [
@@ -35,10 +34,13 @@ export const metadata: Metadata = {
     "business leads India"
   ],
   authors: [{ name: "Aiclex Technologies" }],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: "DhandaLeads | B2B Leads Generation",
     description: "The smartest B2B data engine for Indian businesses. Find, verify, and close leads on autopilot.",
-    url: "https://dhandaleads.com", // Replace with actual domain
+    url: "https://dhandaleads.com",
     siteName: "DhandaLeads",
     locale: "en_IN",
     type: "website",
@@ -66,6 +68,16 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Google Analytics (gtag.js) */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-BVKJKZL9XR" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-BVKJKZL9XR');
+          `}
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
