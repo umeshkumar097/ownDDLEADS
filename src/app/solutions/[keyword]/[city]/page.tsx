@@ -11,6 +11,7 @@ export const revalidate = 2592000; // Cache for 30 days
 import { CheckCircle2, ArrowRight, BarChart3, Zap, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { Toaster } from 'react-hot-toast';
 
 // 1. Generate Static Params for all Keyword x City Combinations
 // NOTE: Due to Vercel/Next.js limits + build time optimization, we can either
@@ -131,6 +132,7 @@ export default async function DynamicSEOLandingPage({ params }: { params: Promis
 
             <main className="flex-1">
                 <ExitIntentPopup city={city.name} keyword={keyword.keyword} />
+                <Toaster position="bottom-left" />
                 <TrustWallToast />
 
                 {/* Hero Section */}
