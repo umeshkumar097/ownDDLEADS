@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import { db } from '@/db';
 import { seoCities, seoKeywords, seoTranslations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -35,12 +36,31 @@ export async function generateStaticParams() {
     return params;
 }
 
+// Cached Data Fetchers
+const getCachedKeyword = unstable_cache(
+    async (slug: string) => db.select().from(seoKeywords).where(eq(seoKeywords.slug, slug)).limit(1),
+    ['seo-keyword'],
+    { revalidate: 2592000 }
+);
+
+const getCachedCity = unstable_cache(
+    async (slug: string) => db.select().from(seoCities).where(eq(seoCities.slug, slug)).limit(1),
+    ['seo-city'],
+    { revalidate: 2592000 }
+);
+
+const getCachedTranslation = unstable_cache(
+    async (keywordId: number, lang: string) => db.select().from(seoTranslations).where(and(eq(seoTranslations.keywordId, keywordId), eq(seoTranslations.languageCode, lang))).limit(1),
+    ['seo-translation'],
+    { revalidate: 2592000 }
+);
+
 // 2. Dynamic Metadata Injection
 export async function generateMetadata({ params, searchParams }: { params: Promise<{ keyword: string, city: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
     const resolvedParams = await params;
     const resolvedSearchParams = await searchParams;
-    let keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
-    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
+    let keywordData = await getCachedKeyword(resolvedParams.keyword);
+    const cityData = await getCachedCity(resolvedParams.city);
 
     if (!keywordData.length || !cityData.length) {
         return {
@@ -88,8 +108,8 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
 export default async function DynamicSEOLandingPage({ params, searchParams }: { params: Promise<{ keyword: string, city: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const resolvedParams = await params;
     const resolvedSearchParams = await searchParams;
-    const keywordData = await db.select().from(seoKeywords).where(eq(seoKeywords.slug, resolvedParams.keyword)).limit(1);
-    const cityData = await db.select().from(seoCities).where(eq(seoCities.slug, resolvedParams.city)).limit(1);
+    const keywordData = await getCachedKeyword(resolvedParams.keyword);
+    const cityData = await getCachedCity(resolvedParams.city);
 
     let keyword = keywordData[0];
     let city = cityData[0];
@@ -115,14 +135,7 @@ export default async function DynamicSEOLandingPage({ params, searchParams }: { 
     let contextParagraph = keyword.contextParagraph;
 
     if (resolvedSearchParams.lang && typeof resolvedSearchParams.lang === 'string') {
-        const translation = await db.select()
-            .from(seoTranslations)
-            .where(
-                and(
-                    eq(seoTranslations.keywordId, keyword.id),
-                    eq(seoTranslations.languageCode, resolvedSearchParams.lang)
-                )
-            ).limit(1);
+        const translation = await getCachedTranslation(keyword.id, resolvedSearchParams.lang);
         if (translation.length > 0) {
             intentHeadline = translation[0].translatedTitle;
             contextParagraph = translation[0].translatedContent;
