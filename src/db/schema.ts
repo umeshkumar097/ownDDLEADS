@@ -152,6 +152,7 @@ export const leads = pgTable('leads', {
   linkedinValid: boolean('linkedin_valid').default(false).notNull(),
   status: text('status').notNull().default('New'),
   leadValue: integer('lead_value').notNull().default(0),
+  buyScore: integer('buy_score').notNull().default(0),
   aiAnalysis: text('ai_analysis'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
