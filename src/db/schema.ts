@@ -10,6 +10,7 @@ import {
   serial,
   numeric,
   varchar,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import type { AdapterAccount } from '@auth/core/adapters';
 
@@ -311,3 +312,19 @@ export const automationLogs = pgTable('automation_logs', {
   sentAt: timestamp('sent_at').defaultNow().notNull(),
 });
 
+export const apiKeys = pgTable('api_keys', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').references(() => users.id).notNull(),
+  keyHash: varchar('key_hash', { length: 255 }).unique().notNull(),
+  scopes: jsonb('scopes').default('["read:leads"]').notNull(),
+  lastUsedAt: timestamp('last_used_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const seoTranslations = pgTable('seo_translations', {
+  id: serial('id').primaryKey(),
+  keywordId: integer('keyword_id').references(() => seoKeywords.id).notNull(),
+  languageCode: varchar('language_code', { length: 10 }).notNull(), // e.g., 'hi', 'bn', 'mr'
+  translatedTitle: varchar('translated_title', { length: 255 }).notNull(),
+  translatedContent: text('translated_content').notNull(),
+});
