@@ -7,7 +7,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ExitIntentPopup from '@/components/ExitIntentPopup';
-import TrustWallToast from '@/components/TrustWallToast';
 export const revalidate = 2592000; // Cache for 30 days
 import { CheckCircle2, ArrowRight, BarChart3, Zap, Building2 } from 'lucide-react';
 import Link from 'next/link';

@@ -44,6 +44,9 @@ function LoginContent() {
         if (searchParams?.get('error') === 'SessionExpired') {
             toast.error("Admin session required. Please log in.");
         }
+        if (searchParams?.get('error') === 'OAuthAccountNotLinked') {
+            toast.error("To confirm your identity, please sign in with the same account you used originally (e.g., Email & Password).", { duration: 6000 });
+        }
     }, [searchParams]);
 
     useEffect(() => {

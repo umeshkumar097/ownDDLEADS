@@ -16,6 +16,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: DrizzleAdapter(db),
     session: { strategy: 'jwt' },
     trustHost: true,
+    pages: {
+        signIn: '/login',
+        error: '/login',
+    },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
