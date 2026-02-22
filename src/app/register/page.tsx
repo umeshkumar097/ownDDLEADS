@@ -1,15 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Mail, Lock, User, Phone, ArrowRight, ShieldCheck, CheckCircle } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import { trackEvent } from '@/lib/tracking';
 
-export default function RegisterPage() {
+function RegisterPageContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [formData, setFormData] = useState({
@@ -38,15 +40,24 @@ export default function RegisterPage() {
         const toastId = toast.loading('Creating your account...');
 
         try {
+            // Append UTM params if present
+            const payload = {
+                ...formData,
+                utmSource: searchParams.get('utm_source'),
+                utmMedium: searchParams.get('utm_medium'),
+                utmCampaign: searchParams.get('utm_campaign'),
+            };
+
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             });
 
             const data = await res.json();
 
             if (res.ok) {
+                trackEvent('Registration_Complete', { method: 'Email' });
                 toast.success(data.message || 'Account created successfully!', { id: toastId });
                 setIsSuccess(true);
             } else {
@@ -144,7 +155,10 @@ export default function RegisterPage() {
                             </div>
 
                             <button
-                                onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+                                onClick={() => {
+                                    trackEvent('Registration_Complete', { method: 'Google' });
+                                    signIn('google', { callbackUrl: '/dashboard' });
+                                }}
                                 className="w-full mt-6 flex py-3 px-4 border border-white/10 rounded-xl shadow-sm text-sm font-medium text-white bg-white/5 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors justify-center items-center gap-3"
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -180,5 +194,13 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-white"><div className="animate-pulse">Loading Identity Verification Portal...</div></div>}>
+            <RegisterPageContent />
+        </Suspense>
     );
 }

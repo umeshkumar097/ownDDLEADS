@@ -2,14 +2,21 @@
 
 import { Activity } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
-
 import { load } from '@cashfreepayments/cashfree-js';
+import { trackEvent } from '@/lib/tracking';
 
 export default function PricingClientAdapter({ plans }: { plans: any[] }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const isWelcomeOffer = searchParams.get('welcome_offer') === 'true';
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('visited_pricing', 'true');
+        }
+    }, []);
 
     const handleSubscribe = async (creditAmount: number, priceInCents: number, name: string) => {
         const toastId = toast.loading('Initializing Secure Checkout...');
@@ -31,6 +38,11 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
             const data = await res.json();
 
             if (data.payment_session_id) {
+                trackEvent('Payment_Initiated', {
+                    currency: 'INR',
+                    value: priceInCents / 100,
+                    plan: name
+                });
                 toast.success('Gateway secured. Redirecting...', { id: toastId });
                 const cashfree = await load({
                     mode: "production"

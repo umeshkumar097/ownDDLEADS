@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CreditCard, History, ArrowUpRight, ArrowDownRight, Wallet, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { toast, Toaster } from 'react-hot-toast';
 import { format } from 'date-fns';
 import { load } from '@cashfreepayments/cashfree-js';
+import { trackEvent } from '@/lib/tracking';
 
 interface Transaction {
     id: string;
@@ -21,10 +22,27 @@ interface Transaction {
 export default function WalletClient({ plans }: { plans: any[] }) {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'usage' | 'purchase'>('usage');
     const [showPricing, setShowPricing] = useState(false);
+
+    // Track Purchase Completion dynamically
+    useEffect(() => {
+        const orderStatus = searchParams.get('status');
+        const orderId = searchParams.get('order_id');
+
+        if (orderStatus === 'SUCCESS' && orderId) {
+            const pixelFired = localStorage.getItem(`pixel_${orderId}`);
+            if (!pixelFired) {
+                trackEvent('Purchase_Success', { order_id: orderId });
+                localStorage.setItem(`pixel_${orderId}`, 'true');
+                localStorage.setItem('has_purchased', 'true'); // For Retargeting Banner
+                router.replace('/dashboard/wallet'); // Clean UX
+            }
+        }
+    }, [searchParams, router]);
 
     const handleSubscribe = async (creditAmount: number, priceInCents: number, name: string) => {
         const toastId = toast.loading('Initializing Secure Checkout...');

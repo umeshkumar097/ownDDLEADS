@@ -30,6 +30,9 @@ export const users = pgTable('user', {
   referredBy: text('referred_by'), // Restored column
   streakDays: integer('streak_days').default(0).notNull(), // Restored column
   lastLogin: timestamp('last_login'), // Restored column
+  utmSource: text('utm_source'), // Phase 22 Ads Tracking
+  utmMedium: text('utm_medium'),
+  utmCampaign: text('utm_campaign'),
 });
 
 export const accounts = pgTable(

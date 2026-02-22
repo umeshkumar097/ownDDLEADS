@@ -1,7 +1,7 @@
 import { db } from "@/db";
-import { usageLogs, users } from "@/db/schema";
+import { usageLogs, users, allTransactions } from "@/db/schema";
 import { desc, eq, sum } from "drizzle-orm";
-import { Activity, Zap, Server, Shield } from "lucide-react";
+import { Activity, Zap, Server, Shield, TrendingUp } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +25,16 @@ export default async function AnalyticsPage() {
     const totalBurnedResult = await db.select({ value: sum(usageLogs.creditsDeducted) }).from(usageLogs);
     const totalBurnedAllTime = totalBurnedResult[0]?.value || 0;
 
+    // 3. Marketing ROI calculations (Phase 21)
+    const totalRevenueResult = await db.select({ value: sum(allTransactions.amount) })
+        .from(allTransactions)
+        .where(eq(allTransactions.status, 'SUCCESS'));
+    const totalRevenue = parseFloat(totalRevenueResult[0]?.value || '0');
+
+    // Ad Spend is currently mocked. A future phase could connect this to Meta/Google APIs
+    const MOCK_AD_SPEND = 25000;
+    const marketingROI = MOCK_AD_SPEND > 0 ? ((totalRevenue - MOCK_AD_SPEND) / MOCK_AD_SPEND) * 100 : 0;
+
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
             {/* Header */}
@@ -39,7 +49,7 @@ export default async function AnalyticsPage() {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="bg-gradient-to-br from-rose-900/20 to-slate-900 border border-white/10 rounded-3xl p-6 flex flex-col justify-center">
                     <div className="flex items-center gap-3 text-slate-400 font-semibold uppercase tracking-wider text-sm mb-2">
                         <Zap className="w-4 h-4 text-emerald-400" /> Lifetime Credits Burned
@@ -65,6 +75,31 @@ export default async function AnalyticsPage() {
                     </div>
                     <div className="text-xl font-bold text-slate-300">
                         Stable (No active blocks)
+                    </div>
+                </div>
+
+                {/* Marketing ROI Card */}
+                <div className="bg-gradient-to-br from-blue-900/20 to-slate-900 border border-blue-500/30 rounded-3xl p-6 flex flex-col justify-center relative overflow-hidden">
+                    <div className="absolute -right-4 -bottom-4 opacity-10"><TrendingUp className="w-32 h-32" /></div>
+                    <div className="flex items-center gap-3 text-blue-400 font-semibold uppercase tracking-wider text-[10px] sm:text-xs mb-4 relative z-10">
+                        <TrendingUp className="w-4 h-4" /> Paid Ads ROI (ROAS)
+                    </div>
+
+                    <div className="flex flex-col gap-1 relative z-10">
+                        <div className="flex justify-between items-end">
+                            <span className="text-slate-400 text-xs">Revenue</span>
+                            <span className="text-emerald-400 font-mono font-bold">₹{totalRevenue.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between items-end border-b border-white/10 pb-2">
+                            <span className="text-slate-400 text-xs">Ad Spend</span>
+                            <span className="text-rose-400 font-mono font-bold">₹{MOCK_AD_SPEND.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between items-end pt-2">
+                            <span className="text-slate-300 font-bold text-sm">Net ROI</span>
+                            <div className={`font-black tracking-tight ${marketingROI >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                {marketingROI > 0 ? '+' : ''}{marketingROI.toFixed(1)}%
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

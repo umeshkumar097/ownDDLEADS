@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Send, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { trackEvent } from '@/lib/tracking';
 
 interface ExitIntentPopupProps {
     city: string;
@@ -51,6 +52,7 @@ export default function ExitIntentPopup({ city, keyword }: ExitIntentPopupProps)
             });
 
             if (res.ok) {
+                trackEvent('Lead', { source: 'ExitIntentPopup', city, keyword });
                 setIsSuccess(true);
                 toast.success('Check your inbox! The free leads are on their way.');
                 setTimeout(handleClose, 3000);

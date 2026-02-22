@@ -10,7 +10,7 @@ import crypto from 'crypto';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { name, email, phone, password } = body;
+        const { name, email, phone, password, utmSource, utmMedium, utmCampaign } = body;
 
         if (!name || !email || !phone || !password) {
             return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
@@ -41,6 +41,9 @@ export async function POST(req: Request) {
             email: email.toLowerCase(),
             phone,
             password: hashedPassword,
+            utmSource,
+            utmMedium,
+            utmCampaign
         }).returning();
 
         // Generate verification token
