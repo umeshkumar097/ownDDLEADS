@@ -11,7 +11,7 @@ export default function ProfitCalculator() {
 
     const estimatedClients = Math.floor(leads * (conversionRate / 100));
     const totalProfit = estimatedClients * profitPerClient;
-    const leadsCostEstimate = leads * 0.4; // Assuming rough 40p per lead on higher tiers
+    const leadsCostEstimate = Math.ceil(leads * 0.498); // Accounting for ₹249 for 500 leads (~50p per lead)
     const netROI = totalProfit > 0 ? ((totalProfit - leadsCostEstimate) / leadsCostEstimate) * 100 : 0;
 
     return (

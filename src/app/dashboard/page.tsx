@@ -11,6 +11,7 @@ import DashboardStats from '@/components/DashboardStats';
 import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
 import WelcomeOfferPopup from '@/components/WelcomeOfferPopup';
+import AdsWelcomeOffer from '@/components/AdsWelcomeOffer';
 
 export default function DashboardPage() {
     return (
@@ -373,6 +374,11 @@ function DashboardContent() {
                         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">Audience Discovery</h1>
                         <p className="text-slate-400 max-w-xl text-lg">Harness AI and smart proxy routing to extract highly verified B2B & B2C contacts globally.</p>
                     </div>
+
+                    {/* New User Ads Offer Banner (Triggered when 0 credits + never purchased) */}
+                    {credits === 0 && userData?.hasPurchased === false && (
+                        <AdsWelcomeOffer />
+                    )}
 
                     {/* Search Engine Area */}
                     <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/20 rounded-3xl p-8 mb-4 shadow-[0_0_40px_-15px_rgba(79,70,229,0.3)]">

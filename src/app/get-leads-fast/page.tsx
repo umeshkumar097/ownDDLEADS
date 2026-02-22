@@ -294,7 +294,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         </div>
                         <div className="bg-black border border-white/10 p-8 rounded-3xl text-center backdrop-blur-sm shrink-0 w-full md:w-[380px] relative z-10 shadow-[0_0_80px_rgba(0,0,0,0.8)]">
                             <div className="text-slate-500 font-bold line-through mb-1 text-lg">Regular Value: ₹1,999</div>
-                            <div className="text-6xl font-black text-white mb-2">₹499</div>
+                            <div className="text-6xl font-black text-white mb-2">₹249</div>
                             <div className="text-indigo-400 text-sm mb-8 font-bold tracking-wide uppercase">One-time payment • Non-expiring</div>
                             <Link href="/register" className="block w-full px-8 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg font-black rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] transform hover:-translate-y-1">
                                 Secure Access Now
@@ -374,7 +374,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         </div>
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
                             <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Do my purchased credits expire next month?</h4>
-                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">No. We detest forceful monthly subscriptions. If you buy a ₹499 pack today, those 500 credits sit securely in your wallet until you need them, whether that's tomorrow or next year.</p>
+                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">No. We detest forceful monthly subscriptions. If you buy a ₹249 pack today, those 500 credits sit securely in your wallet until you need them, whether that's tomorrow or next year.</p>
                         </div>
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
                             <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Can I test the platform before buying?</h4>
