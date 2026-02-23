@@ -233,6 +233,9 @@ export const allTransactions = pgTable('all_transactions', {
   status: text('status').notNull().default('SUCCESS'), // 'SUCCESS', 'FAILED', 'REFUNDED'
   sourceCity: varchar('source_city', { length: 100 }), // Phase 14 Attribution
   sourceKeyword: varchar('source_keyword', { length: 100 }), // Phase 14 Attribution
+  companyName: varchar('company_name', { length: 255 }), // Phase 22 GST
+  gstNumber: varchar('gst_number', { length: 50 }),
+  billingAddress: text('billing_address'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

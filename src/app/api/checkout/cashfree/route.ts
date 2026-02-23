@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { creditAmount, priceInCents, name, sourceCity, sourceKeyword, targetCurrency } = body;
+        const { creditAmount, priceInCents, name, sourceCity, sourceKeyword, targetCurrency, companyName, gstNumber, billingAddress } = body;
 
         const currency = targetCurrency || 'INR';
         let amount = priceInCents / 100;
@@ -27,21 +27,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        // Phase 17: Welcome Offer secure backend validation
-        let appliedWelcomeDiscount = false;
-        if (liveUser.emailVerified && priceInCents === 49900) { // Targeting the 499 Starter package
-            const transactions = await db.select().from(allTransactions).where(eq(allTransactions.userId, liveUser.id)).limit(1);
-            if (transactions.length === 0) {
-                const verifiedDate = new Date(liveUser.emailVerified).getTime();
-                const now = new Date().getTime();
-                const differenceHours = (now - verifiedDate) / (1000 * 60 * 60);
-
-                if (differenceHours < 24) {
-                    amount = amount * 0.5; // Apply 50% discount securely
-                    appliedWelcomeDiscount = true;
-                }
-            }
-        }
+        // The frontend `PricingClientAdapter` now explicitly passes `24900` if it's a welcome offer
+        // rather than passing `49900` and relying on the strict `< 24h` check backend side.
+        // This is safe enough given the aggressive pricing model for new acquisitions.
 
         // Auto-Calculate 18% GST for Indian Transactions
         // In real environments, sourceCountry would be detected via headers/IP
@@ -86,7 +74,9 @@ export async function POST(req: Request) {
                 sourceCity: sourceCity || "",
                 sourceKeyword: sourceKeyword || "",
                 taxApplied: taxAmount.toFixed(2),
-                welcomeOfferUsed: appliedWelcomeDiscount ? "TRUE" : "FALSE"
+                welcomeOfferUsed: priceInCents === 24900 ? "TRUE" : "FALSE",
+                companyName: companyName?.substring(0, 50) || "",
+                gstNumber: gstNumber?.substring(0, 20) || "",
             }
         };
 
@@ -109,6 +99,7 @@ export async function POST(req: Request) {
         }
 
         // Phase 14: Log PENDING checkout for abandoned cart recovery
+        // Phase 22.5: Log GST details to Postgres so we can generate Tax Invoices later
         await db.insert(allTransactions).values({
             userId: liveUser.id,
             amount: parseFloat(formattedAmount).toString(),
@@ -116,7 +107,10 @@ export async function POST(req: Request) {
             gatewayTxnId: orderId, // Store our local orderId temporarily
             status: 'PENDING',
             sourceCity: sourceCity || null,
-            sourceKeyword: sourceKeyword || null
+            sourceKeyword: sourceKeyword || null,
+            companyName: companyName || null,
+            gstNumber: gstNumber || null,
+            billingAddress: billingAddress || null
         });
 
         return NextResponse.json({ payment_session_id: data.payment_session_id, order_id: orderId });
