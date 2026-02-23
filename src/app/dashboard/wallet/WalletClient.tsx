@@ -24,6 +24,7 @@ export default function WalletClient({ plans }: { plans: any[] }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [walletBalance, setWalletBalance] = useState<number>(0);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'usage' | 'purchase'>('usage');
     const [showPricing, setShowPricing] = useState(false);
@@ -95,6 +96,7 @@ export default function WalletClient({ plans }: { plans: any[] }) {
             if (!res.ok) throw new Error('Failed to fetch history');
             const data = await res.json();
             setTransactions(data.transactions || []);
+            setWalletBalance(data.availableCredits || 0); // Setup real-time wallet balance
         } catch (error) {
             console.error('Failed to fetch transaction history:', error);
             toast.error('Failed to load wallet history', { style: { background: '#333', color: '#fff' } });
@@ -135,11 +137,11 @@ export default function WalletClient({ plans }: { plans: any[] }) {
                                 <CreditCard className="w-5 h-5 text-indigo-400" /> Available Balance
                             </h2>
                             <div className="mt-4 flex items-baseline gap-4">
-                                <span className="text-6xl md:text-7xl font-black text-white">{(session?.user as any)?.creditsBalance || 0}</span>
+                                <span className="text-6xl md:text-7xl font-black text-white">{walletBalance}</span>
                                 <span className="text-xl text-indigo-300 font-medium">Credits</span>
                             </div>
 
-                            {((session?.user as any)?.creditsBalance || 0) < 10 ? (
+                            {walletBalance < 10 ? (
                                 <div className="mt-8">
                                     <button onClick={() => setShowPricing(true)} className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_-5px_rgba(225,29,72,0.6)] animate-pulse">
                                         Low Credits! Buy Now to Keep Scaling <ArrowUpRight className="w-5 h-5" />
