@@ -326,11 +326,11 @@ export default function Home() {
             {/* Pro (Growth) */}
             <div className="border-2 border-emerald-600 bg-indigo-950 rounded-3xl p-8 flex flex-col shadow-2xl relative transform md:-translate-y-4">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-500 text-white font-bold px-4 py-1 rounded-full text-sm tracking-wide shadow-lg">MOST POPULAR</div>
-              <h3 className="text-xl font-bold text-white mb-2">Growth</h3>
-              <div className="text-4xl font-black text-white mb-2">₹3,999</div>
+              <h3 className="text-xl font-bold text-white mb-2">Growth Pack</h3>
+              <div className="text-4xl font-black text-white mb-2">₹1,598</div>
               <p className="text-indigo-200 text-sm mb-6">For serious marketers</p>
 
-              <div className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-bold px-4 py-2 rounded-lg text-center mb-8">500 Credits</div>
+              <div className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 font-bold px-4 py-2 rounded-lg text-center mb-8">1800 Credits</div>
 
               <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-start gap-3 text-white"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" /> Advanced Google Maps Engine</li>
@@ -339,16 +339,16 @@ export default function Home() {
                 <li className="flex items-start gap-3 text-white"><CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" /> Credits Never Expire</li>
               </ul>
 
-              <Link href="/pricing" className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-colors text-center shadow-lg">Get 500 Credits</Link>
+              <Link href="/pricing" className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-colors text-center shadow-lg">Get 1800 Credits</Link>
             </div>
 
             {/* Agency (Scale) */}
             <div className="border border-slate-200 bg-white rounded-3xl p-8 flex flex-col shadow-sm">
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Scale</h3>
-              <div className="text-4xl font-black text-indigo-950 mb-2">₹6,999</div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Scale Pack</h3>
+              <div className="text-4xl font-black text-indigo-950 mb-2">₹2,999</div>
               <p className="text-slate-500 text-sm mb-6">For agencies & large teams</p>
 
-              <div className="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-lg text-center mb-8">1000 Credits</div>
+              <div className="bg-slate-100 text-slate-700 font-bold px-4 py-2 rounded-lg text-center mb-8">4999 Credits</div>
 
               <ul className="space-y-4 mb-8 flex-1">
                 <li className="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> Everything in Growth</li>
@@ -356,7 +356,7 @@ export default function Home() {
                 <li className="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> Dedicated Account Manager</li>
               </ul>
 
-              <Link href="/pricing" className="w-full py-3 rounded-xl border-2 border-slate-200 text-slate-800 font-bold hover:bg-slate-50 transition-colors text-center">Get 1000 Credits</Link>
+              <Link href="/pricing" className="w-full py-3 rounded-xl border-2 border-slate-200 text-slate-800 font-bold hover:bg-slate-50 transition-colors text-center">Get 4999 Credits</Link>
             </div>
 
           </div>

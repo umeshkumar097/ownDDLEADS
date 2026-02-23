@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 
 export default function PublicPartnershipPage() {
     const [referrals, setReferrals] = useState(10);
-    const [avgSpend, setAvgSpend] = useState(3999); // Growth Plan
+    const [avgSpend, setAvgSpend] = useState(1598); // Growth Plan
 
     const calculateEarnings = () => {
         // 1st purchase: 20%
@@ -119,9 +119,9 @@ export default function PublicPartnershipPage() {
                                             onChange={(e) => setAvgSpend(Number(e.target.value))}
                                             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-emerald-500"
                                         >
-                                            <option value={999}>₹999 (Basic Recharge)</option>
-                                            <option value={3999}>₹3,999 (Growth Plan - Most Popular)</option>
-                                            <option value={6999}>₹6,999 (Scale Plan)</option>
+                                            <option value={499}>₹499 (Starter Plan)</option>
+                                            <option value={1598}>₹1,598 (Growth Plan - Most Popular)</option>
+                                            <option value={2999}>₹2,999 (Scale Plan)</option>
                                         </select>
                                     </div>
                                 </div>
