@@ -33,6 +33,7 @@ export const users = pgTable('user', {
   utmSource: text('utm_source'), // Phase 22 Ads Tracking
   utmMedium: text('utm_medium'),
   utmCampaign: text('utm_campaign'),
+  membershipType: text('membership_type').default('free').notNull(), // Phase 23: e.g., 'free', 'pro', 'LTD'
 });
 
 export const accounts = pgTable(
@@ -334,4 +335,16 @@ export const seoTranslations = pgTable('seo_translations', {
   languageCode: varchar('language_code', { length: 10 }).notNull(), // e.g., 'hi', 'bn', 'mr'
   translatedTitle: varchar('translated_title', { length: 255 }).notNull(),
   translatedContent: text('translated_content').notNull(),
+});
+
+// --- Phase 23: AppSumo Automation & License Key Management ---
+
+export const appsumoCodes = pgTable('appsumo_codes', {
+  id: serial('id').primaryKey(),
+  licenseKey: varchar('license_key', { length: 100 }).unique().notNull(), // Code provided by AppSumo
+  tierLevel: integer('tier_level').notNull(), // e.g. 1, 2, 3
+  isRedeemed: boolean('is_redeemed').default(false).notNull(),
+  redeemedByUserId: text('redeemed_by_user_id').references(() => users.id, { onDelete: 'set null' }),
+  redeemedAt: timestamp('redeemed_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });

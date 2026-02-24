@@ -48,7 +48,8 @@ export async function GET(req: Request) {
             credits: availableCredits,
             user: {
                 emailVerified: userRole?.emailVerified,
-                hasPurchased: hasPurchased
+                hasPurchased: hasPurchased,
+                membershipType: userRole?.membershipType || 'free'
             }
         });
 

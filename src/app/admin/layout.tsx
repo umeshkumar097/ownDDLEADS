@@ -96,6 +96,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                         <span className="group-hover:text-emerald-300 transition-colors text-slate-300 text-sm">SEO Engine</span>
                     </Link>
 
+                    <Link href="/admin/appsumo" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group text-sm font-medium border border-transparent hover:border-yellow-500/20 hover:bg-yellow-500/5 mt-1">
+                        <Landmark className="w-5 h-5 text-slate-400 group-hover:text-yellow-400" />
+                        <span className="group-hover:text-yellow-300 transition-colors text-slate-300 text-sm">AppSumo Manager</span>
+                    </Link>
+
                     <div className="pt-6 pb-2">
                         <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Super Actions</p>
                     </div>

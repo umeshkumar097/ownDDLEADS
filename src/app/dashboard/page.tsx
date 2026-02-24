@@ -32,7 +32,7 @@ function DashboardContent() {
     const [selectedListId, setSelectedListId] = useState<string>('');
     const [newListName, setNewListName] = useState<string>('');
     const [credits, setCredits] = useState<number | string>('...');
-    const [userData, setUserData] = useState<{ emailVerified: string | null, hasPurchased: boolean } | null>(null);
+    const [userData, setUserData] = useState<{ emailVerified: string | null, hasPurchased: boolean, membershipType: string } | null>(null);
 
     const [loading, setLoading] = useState(false);
     const [jobRole, setJobRole] = useState('');
@@ -65,7 +65,8 @@ function DashboardContent() {
                 setCredits(data.credits);
                 setUserData({
                     emailVerified: data.user?.emailVerified || null,
-                    hasPurchased: data.user?.hasPurchased || false
+                    hasPurchased: data.user?.hasPurchased || false,
+                    membershipType: data.user?.membershipType || 'free'
                 });
                 if (data.lists.length > 0) setSelectedListId(data.lists[0].id);
             }
@@ -276,7 +277,14 @@ function DashboardContent() {
                         <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-8 w-auto object-contain cursor-pointer transform hover:scale-105 transition-transform" />
                     </div>
                     <div className="flex items-center gap-4 md:gap-6">
-                        <span className="text-sm text-slate-400 hidden sm:inline-block">Welcome, <span className="text-white font-medium">{session?.user?.name || 'User'}</span></span>
+                        <div className="flex flex-col items-end md:items-start md:flex-row md:items-center gap-2">
+                            <span className="text-sm text-slate-400 hidden sm:inline-block">Welcome, <span className="text-white font-medium">{session?.user?.name || 'User'}</span></span>
+                            {userData?.membershipType === 'LTD' && (
+                                <span className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-500 border border-yellow-500/30 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+                                    <Activity className="w-3 h-3" /> AppSumo LTD
+                                </span>
+                            )}
+                        </div>
                         <button onClick={() => router.push('/dashboard/partnership')} className="text-sm font-bold px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 rounded-full hidden md:flex items-center gap-2 transition-all">
                             Affiliate 🔥
                         </button>
