@@ -21,6 +21,7 @@ export default async function TransactionsPage() {
     })
         .from(allTransactions)
         .leftJoin(users, eq(users.id, allTransactions.userId))
+        .where(eq(allTransactions.status, 'SUCCESS'))
         .orderBy(desc(allTransactions.createdAt))
         .limit(100);
 

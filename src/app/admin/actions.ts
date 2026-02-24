@@ -147,7 +147,9 @@ export async function getAdminStats() {
     const totalLeadsGenerated = leadsResult[0]?.count || 0;
 
     // Real numbers from allTransactions
-    const transactionsResult = await db.select({ totalAmount: sum(allTransactions.amount), totalCredits: sum(allTransactions.creditsAdded) }).from(allTransactions);
+    const transactionsResult = await db.select({ totalAmount: sum(allTransactions.amount), totalCredits: sum(allTransactions.creditsAdded) })
+        .from(allTransactions)
+        .where(eq(allTransactions.status, 'SUCCESS'));
     const totalCreditsPurchased = transactionsResult[0]?.totalCredits || 0;
     const totalCreditsBurned = totalLeadsGenerated;
 

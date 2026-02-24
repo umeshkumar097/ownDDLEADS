@@ -61,16 +61,31 @@ export async function POST(req: Request) {
                 return NextResponse.json({ received: true, message: 'Already processed' });
             }
 
-            // Record transaction specifically in God Eye Ledger
-            await db.insert(allTransactions).values({
-                userId: userId,
-                amount: amountInr.toString(),
-                creditsAdded: creditsPurchased,
-                gatewayTxnId: paymentData.cf_payment_id.toString(),
-                status: 'SUCCESS',
-                sourceCity: sourceCity || null,
-                sourceKeyword: sourceKeyword || null
+            // Find the PENDING transaction we created during checkout using orderId
+            const pendingTxn = await db.query.allTransactions.findFirst({
+                where: eq(allTransactions.gatewayTxnId, orderId)
             });
+
+            if (pendingTxn) {
+                // Update existing transaction in God Eye Ledger instead of inserting duplicates
+                await db.update(allTransactions)
+                    .set({
+                        gatewayTxnId: paymentData.cf_payment_id.toString(), // Update to the real gateway true ID
+                        status: 'SUCCESS'
+                    })
+                    .where(eq(allTransactions.id, pendingTxn.id));
+            } else {
+                // Record transaction specifically in God Eye Ledger (Fallback for legacy)
+                await db.insert(allTransactions).values({
+                    userId: userId,
+                    amount: amountInr.toString(),
+                    creditsAdded: creditsPurchased,
+                    gatewayTxnId: paymentData.cf_payment_id.toString(),
+                    status: 'SUCCESS',
+                    sourceCity: sourceCity || null,
+                    sourceKeyword: sourceKeyword || null
+                });
+            }
 
             // 1. Credit Balance Update
             const currentBalance = await db.query.creditsBalance.findFirst({
