@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ShieldCheck, Search, Zap, CheckCircle2, ArrowRight, Activity, Users, Lock, Check, AlertTriangle, MessageCircle, TrendingUp, HelpCircle, Star, Target, Gift } from 'lucide-react';
 import VerifiedLeadCounter from '@/components/VerifiedLeadCounter';
 import LiveActivityFeed from '@/components/LiveActivityFeed';
-import ProfitCalculator from '@/components/ProfitCalculator';
+import AdsLeadForm from '@/components/AdsLeadForm';
 
 export const metadata = {
     title: "Aiclex Technologies Presents DhandaLeads | B2B Lead Engine",
@@ -48,9 +48,9 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         Zero bounces. 1-click WhatsApp export. 1/10th the price of global alternatives.
                     </p>
 
-                    <Link href="/register" className="inline-flex px-12 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xl md:text-2xl font-black rounded-2xl items-center gap-3 transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] mb-6 mt-2 relative overflow-hidden group">
+                    <Link href="#lead-form" className="inline-flex px-12 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xl md:text-2xl font-black rounded-2xl items-center gap-3 transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(79,70,229,0.3)] hover:shadow-[0_0_60px_rgba(79,70,229,0.5)] mb-6 mt-2 relative overflow-hidden group">
                         <span className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 slant"></span>
-                        <span className="relative">Unlock Your Leads Now</span>
+                        <span className="relative">Request Invited Access</span>
                         <ArrowRight className="w-6 h-6 relative" />
                     </Link>
 
@@ -102,8 +102,8 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         <br /><br />
                         It's fast. It's perfectly targeted for India. And it refuses to charge you for bad data.
                     </p>
-                    <Link href="/register" className="inline-flex px-8 py-4 bg-white hover:bg-slate-200 text-indigo-950 text-lg font-black rounded-xl items-center gap-2 transition-all shadow-lg">
-                        See How Much Data We Hold in <span className="capitalize">{city}</span>
+                    <Link href="#lead-form" className="inline-flex px-8 py-4 bg-white hover:bg-slate-200 text-indigo-950 text-lg font-black rounded-xl items-center gap-2 transition-all shadow-lg">
+                        Request Invite to our <span className="capitalize">{city}</span> Beta
                     </Link>
                 </div>
             </section>
@@ -204,8 +204,8 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                     </div>
 
                     <div className="mt-16 text-center">
-                        <Link href="/register" className="inline-flex px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-lg font-bold rounded-xl transition-colors shadow-lg">
-                            Run Your First Search
+                        <Link href="#lead-form" className="inline-flex px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-lg font-bold rounded-xl transition-colors shadow-lg">
+                            Request Your Platform Invite
                         </Link>
                     </div>
                 </div>
@@ -278,28 +278,32 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         <p className="text-slate-400 text-lg">Calculate exactly how much ROI you stand to generate with pristine data.</p>
                     </div>
 
-                    <ProfitCalculator />
+
 
                     <div className="mt-20 bg-gradient-to-br from-indigo-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-8 md:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
                         <div className="relative z-10 max-w-xl">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold tracking-widest uppercase mb-6 border border-emerald-500/30">
-                                <Star className="w-4 h-4 fill-emerald-400" /> The Offer
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold tracking-widest uppercase mb-6 border border-indigo-500/30">
+                                <ShieldCheck className="w-4 h-4 text-indigo-400" /> Platform Security
                             </div>
-                            <h3 className="text-3xl md:text-4xl font-black mb-6 text-white leading-tight">Start filling your sales pipeline for the price of a coffee.</h3>
+                            <h3 className="text-3xl md:text-4xl font-black mb-6 text-white leading-tight">Why is this platform invite-only?</h3>
+                            <p className="text-slate-400 text-lg leading-relaxed font-medium mb-6">
+                                We are strictly guarding the quality of our data. Unlike public scrapers that allow anyone to blast out spam, DhandaLeads curates its user base.
+                            </p>
                             <ul className="space-y-4 mb-8">
-                                <li className="flex items-center gap-4 text-slate-300 font-medium"><div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30"><Check className="w-5 h-5 text-indigo-400" /></div> Get 500 Confirmed Zero-Bounce Credits</li>
-                                <li className="flex items-center gap-4 text-slate-300 font-medium"><div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30"><Zap className="w-5 h-5 text-indigo-400" /></div> Less than ₹1 per verified prospect</li>
-                                <li className="flex items-center gap-4 text-slate-300 font-medium"><div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 border border-indigo-500/30"><MessageCircle className="w-5 h-5 text-indigo-400" /></div> Lifetime Export to CSV / WhatsApp</li>
+                                <li className="flex items-start gap-4 text-slate-300 font-medium">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 mt-1"><Check className="w-4 h-4 text-emerald-400" /></div>
+                                    <span><strong>IP Protection:</strong> We prevent bad actors from ruining WhatsApp sender reputations by verifying intent via form submissions.</span>
+                                </li>
+                                <li className="flex items-start gap-4 text-slate-300 font-medium">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 mt-1"><Star className="w-4 h-4 fill-emerald-400 text-emerald-400" /></div>
+                                    <span><strong>Dedicated Onboarding:</strong> Every approved user receives a dedicated Account Executive to show them the ropes for maximum ROI.</span>
+                                </li>
                             </ul>
+                            <p className="text-sm text-slate-500 italic">Expected wait time for review is under 24 business hours.</p>
                         </div>
-                        <div className="bg-black border border-white/10 p-8 rounded-3xl text-center backdrop-blur-sm shrink-0 w-full md:w-[380px] relative z-10 shadow-[0_0_80px_rgba(0,0,0,0.8)]">
-                            <div className="text-slate-500 font-bold line-through mb-1 text-lg">Regular Value: ₹1,999</div>
-                            <div className="text-6xl font-black text-white mb-2">₹249</div>
-                            <div className="text-indigo-400 text-sm mb-8 font-bold tracking-wide uppercase">One-time payment • Non-expiring</div>
-                            <Link href="/register" className="block w-full px-8 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg font-black rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] transform hover:-translate-y-1">
-                                Secure Access Now
-                            </Link>
-                            <p className="text-xs text-slate-500 mt-5 flex items-center justify-center gap-2 font-medium"><Lock className="w-3 h-3" /> Checkout via Cashfree Payments</p>
+                        <div className="shrink-0 w-full lg:w-[480px]">
+                            {/* Inject the Lead Form Component Right Here */}
+                            <AdsLeadForm sourceKeyword={keyword} sourceCity={city} />
                         </div>
                     </div>
                 </div>
@@ -394,7 +398,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                     Skip the manual line. Get instant access to the exact B2B decision makers you need to scale your revenue this quarter.
                 </p>
 
-                <Link href="/register" className="inline-flex px-14 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-2xl font-black rounded-2xl items-center gap-4 transition-all transform hover:scale-105 shadow-[0_0_50px_rgba(79,70,229,0.4)]">
+                <Link href="#lead-form" className="inline-flex px-14 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-2xl font-black rounded-2xl items-center gap-4 transition-all transform hover:scale-105 shadow-[0_0_50px_rgba(79,70,229,0.4)]">
                     Activate The Engine Now <ArrowRight className="w-8 h-8" />
                 </Link>
 

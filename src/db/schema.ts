@@ -348,3 +348,16 @@ export const appsumoCodes = pgTable('appsumo_codes', {
   redeemedAt: timestamp('redeemed_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// --- Phase 25: Ads Landing Page Lead Form Integration ---
+
+export const adsLeads = pgTable('ads_leads', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 20 }).notNull(),
+  companyName: varchar('company_name', { length: 255 }),
+  sourceCity: varchar('source_city', { length: 100 }),
+  sourceKeyword: varchar('source_keyword', { length: 100 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
