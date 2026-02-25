@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { adsLeads } from "@/db/schema";
-import { sendBrevoEmail } from "@/lib/brevo";
+import { sendTransactionalEmail } from "@/lib/brevo";
 
 export async function POST(req: Request) {
     try {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         `;
 
         // Send email silently in the background (fire and forget)
-        sendBrevoEmail({
+        sendTransactionalEmail({
             to: [{ email: adminEmail, name: "Admin" }],
             subject: emailSubject,
             htmlContent: emailBody
