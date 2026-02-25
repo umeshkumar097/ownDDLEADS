@@ -6,9 +6,9 @@ import LiveActivityFeed from '@/components/LiveActivityFeed';
 import AdsLeadForm from '@/components/AdsLeadForm';
 
 export const metadata = {
-    title: "Aiclex Technologies Presents DhandaLeads | B2B Lead Engine",
-    description: "Stop cold calling dead numbers. Discover the ultimate B2B lead generation engine with 100% verified Indian data and Zero-Bounce guarantees.",
-    keywords: ["B2B leads", "lead generation India", "verified business data", "Aiclex Technologies", "DhandaLeads"]
+    title: "DhandaLeads | Accelerated B2B Sales Growth Engine",
+    description: "Empower your outbound pipeline with intelligent B2B business intelligence and verified corporate profiles across India.",
+    keywords: ["B2B sales growth", "business intelligence India", "verified corporate data", "Aiclex Technologies", "DhandaLeads"]
 };
 
 export default function GetLeadsFast({ searchParams }: { searchParams: { keyword?: string, city?: string } }) {
@@ -40,7 +40,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 leading-[1.1] tracking-tight">
                         Stop Wasting Time on Dead Numbers.<br className="hidden md:block" />
-                        Get 500+ Confirmed <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 capitalize">{keyword}</span> Instantly.
+                        Discover 500+ Verified <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 capitalize">{keyword}</span> Instantly.
                     </h1>
 
                     <p className="text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed font-medium">
@@ -84,8 +84,8 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                             <div className="flex items-start gap-4 mb-4">
                                 <div className="bg-rose-500/20 p-3 rounded-xl text-rose-500 shrink-0"><Lock className="w-6 h-6" /></div>
                                 <div>
-                                    <h3 className="font-bold text-lg text-white mb-2">Manual Scraping Hell</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed">Your sales team wastes hours copying numbers from JustDial or Google Maps—only to find 40% are disconnected, resulting in demoralized telecallers.</p>
+                                    <h3 className="font-bold text-lg text-white mb-2">Manual Research Hell</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed">Your sales team wastes hours manually verifying contacts from raw directories—only to find 40% are disconnected, resulting in demoralized telecallers.</p>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                 <div className="max-w-5xl mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-5xl font-black mb-6 text-white leading-tight">Enter <span className="text-indigo-400">DhandaLeads</span>.</h2>
                     <p className="text-xl text-slate-300 mx-auto mb-12 leading-relaxed">
-                        We built a proprietary <strong>Lead-Generation-GPT</strong> that crawls the open web, extracts live local Indian listings, and verifies every single endpoint before delivering it to your screen.
+                        We built a proprietary <strong>Business-Intelligence-Engine</strong> that crawls the open web, discovers live local Indian listings, and verifies every single endpoint before delivering it to your screen.
                         <br /><br />
                         It's fast. It's perfectly targeted for India. And it refuses to charge you for bad data.
                     </p>
@@ -144,11 +144,11 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                             <div className="space-y-4">
                                 <div className="bg-slate-950 border border-white/5 p-4 rounded-xl flex justify-between items-center group cursor-pointer hover:border-indigo-500/50 transition-colors">
                                     <div><p className="font-bold text-white text-sm">Director - DLF Real Estate</p><p className="text-xs text-emerald-400 flex items-center gap-1 mt-1"><CheckCircle2 className="w-3 h-3" /> WhatsApp Active</p></div>
-                                    <span className="bg-indigo-600 px-4 py-2 rounded-lg text-xs font-bold text-white group-hover:bg-indigo-500">Export</span>
+                                    <span className="bg-indigo-600 px-4 py-2 rounded-lg text-xs font-bold text-white group-hover:bg-indigo-500">Uncover</span>
                                 </div>
                                 <div className="bg-slate-950 border border-white/5 p-4 rounded-xl flex justify-between items-center group cursor-pointer hover:border-indigo-500/50 transition-colors">
                                     <div><p className="font-bold text-white text-sm">Founder - TechEdge Solutions</p><p className="text-xs text-emerald-400 flex items-center gap-1 mt-1"><CheckCircle2 className="w-3 h-3" /> Inbox Verified</p></div>
-                                    <span className="bg-indigo-600 px-4 py-2 rounded-lg text-xs font-bold text-white group-hover:bg-indigo-500">Export</span>
+                                    <span className="bg-indigo-600 px-4 py-2 rounded-lg text-xs font-bold text-white group-hover:bg-indigo-500">Uncover</span>
                                 </div>
                                 <div className="bg-slate-950 border border-white/5 p-4 rounded-xl flex justify-between items-center opacity-50 block-events-none">
                                     <div><p className="font-bold text-slate-500 text-sm">Manager - Unknown</p><p className="text-xs text-rose-500 flex items-center gap-1 mt-1"><AlertTriangle className="w-3 h-3" /> Bounced (Destroyed)</p></div>
@@ -198,7 +198,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                             </div>
                             <h3 className="text-xl font-bold mb-3 text-white">1-Click Pipeline Fill</h3>
                             <p className="text-slate-400 leading-relaxed text-sm">
-                                Hit export. Load the pure CSV into your CRM or WhatsApp sender and watch your conversion rates skyrocket on clean data.
+                                Hit deliver. Load the pristine CSV into your CRM or WhatsApp sender and watch your conversion rates skyrocket on clean intelligence.
                             </p>
                         </div>
                     </div>
@@ -287,7 +287,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                             </div>
                             <h3 className="text-3xl md:text-4xl font-black mb-6 text-white leading-tight">Why is this platform invite-only?</h3>
                             <p className="text-slate-400 text-lg leading-relaxed font-medium mb-6">
-                                We are strictly guarding the quality of our data. Unlike public scrapers that allow anyone to blast out spam, DhandaLeads curates its user base.
+                                We are strictly guarding the quality of our B2B intelligence. Unlike public platforms that allow anyone to blast out spam, DhandaLeads curates its corporate user base.
                             </p>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-start gap-4 text-slate-300 font-medium">
@@ -332,7 +332,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         </div>
                         <h3 className="text-2xl font-black text-white mb-4 relative z-10">100% Zero-Bounce Guarantee</h3>
                         <p className="text-slate-400 leading-relaxed mb-6 relative z-10 text-lg">
-                            Our promise is absolute. If the DhandaLeads engine delivers an email that bounces or a phone number that is disabled, <strong>you keep your credit</strong>. We only charge you when you extract pristine, verified data. It is a completely risk-free investment.
+                            Our promise is absolute. If the DhandaLeads engine delivers an email that bounces or a phone number that is disabled, <strong>you keep your credit</strong>. We only charge you when you receive pristine, verified intelligence. It is a completely risk-free investment.
                         </p>
                     </div>
                 </div>
@@ -373,8 +373,8 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                             <p className="text-slate-400 text-[15px] leading-relaxed ml-9">1 Credit = 1 successfully unlocked, live contact (Email or Phone number). If the AI flags the contact as dead or if it bounces, zero credits are deducted. You only pay for utility.</p>
                         </div>
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
-                            <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Is the extracted data legally compliant?</h4>
-                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">Absolutely. Our AI engine solely indexes Open-Web resources and public business directories—acting exactly like a hyper-efficient Google Search. We do not hack private databases.</p>
+                            <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Is the aggregated data legally compliant?</h4>
+                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">Absolutely. Our AI engine solely indexes Open-Web resources and public business directories—acting exactly like a hyper-efficient Google Search. We do not access or compromise private databases.</p>
                         </div>
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
                             <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Do my purchased credits expire next month?</h4>
@@ -408,8 +408,8 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                 </div>
             </section>
 
-            {/* 14. FOOTER */}
-            <footer className="py-12 bg-[#000] text-center text-slate-500 text-xs md:text-sm border-t border-white/5 relative z-10">
+            {/* 14. INJECTED ADS FOOTER (Overrides global for LPs) */}
+            <footer className="py-16 bg-[#000] text-center text-slate-500 text-xs md:text-sm border-t border-white/5 relative z-10">
                 <div className="max-w-4xl mx-auto px-6">
                     <div className="flex items-center justify-center gap-2 mb-6 opacity-50">
                         <Image src="/logo.png" alt="DhandaLeads Logo" width={120} height={30} className="grayscale hover:grayscale-0 transition-all duration-300" />
@@ -419,6 +419,21 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                         DhandaLeads by Aiclex Technologies operates under strict data parity and privacy compliance laws.
                         We provide an advanced public index gateway for B2B discovery and organizational enrichment.
                     </p>
+
+                    <div className="border border-white/5 bg-white/5 rounded-2xl p-6 mb-8 max-w-2xl mx-auto text-left flex flex-col items-center sm:block">
+                        <p className="font-bold text-white mb-2 text-center">Business Registration & Contact</p>
+                        <p className="leading-relaxed mb-4 text-center">
+                            <strong>Aiclex Technologies</strong><br />
+                            A-116/117, Okhla Phase II,<br />
+                            New Delhi, 110020, India<br />
+                            <br />
+                            <span className="text-slate-400">GSTIN: 07AAICA8912P1ZN</span> (Verifiable MSME)
+                        </p>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4 pt-4 border-t border-white/5">
+                            <a href="mailto:info@aiclex.in" className="hover:text-indigo-400 transition-colors">📧 info@aiclex.in</a>
+                            <a href="tel:+918449488090" className="hover:text-indigo-400 transition-colors">📞 +91 84494 88090</a>
+                        </div>
+                    </div>
 
                     <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-8 font-medium text-slate-400">
                         <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
