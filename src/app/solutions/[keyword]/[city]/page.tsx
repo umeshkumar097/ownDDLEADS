@@ -12,6 +12,7 @@ import { CheckCircle2, ArrowRight, BarChart3, Zap, Building2 } from 'lucide-reac
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { Toaster } from 'react-hot-toast';
+import Script from 'next/script';
 
 // 1. Generate Static Params for all Keyword x City Combinations
 // NOTE: Due to Vercel/Next.js limits + build time optimization, we can either
@@ -145,6 +146,36 @@ export default async function DynamicSEOLandingPage({ params, searchParams }: { 
     const heroSubheadline = contextParagraph || `Supercharge your B2B sales in ${city.name} with precise, verified data tailored for your precise ideal customer profile.`;
     const trustSignal = `Trusted by over 500+ Businesses scaling locally in ${city.name}, ${city.state}.`;
 
+    // Build JSON-LD Schemas
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://dhandaleads.com" },
+            { "@type": "ListItem", "position": 2, "name": "Solutions", "item": "https://dhandaleads.com/solutions" },
+            { "@type": "ListItem", "position": 3, "name": `${keyword.keyword}`, "item": `https://dhandaleads.com/solutions/${resolvedParams.keyword}` },
+            { "@type": "ListItem", "position": 4, "name": city.name, "item": `https://dhandaleads.com/solutions/${resolvedParams.keyword}/${resolvedParams.city}` },
+        ]
+    };
+
+    const localBusinessSchema = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Aiclex Technologies — DhandaLeads",
+        "description": `B2B Lead Generation company serving ${city.name}, ${city.state}. Verified business contacts for sales teams.`,
+        "url": `https://dhandaleads.com/solutions/${resolvedParams.keyword}/${resolvedParams.city}`,
+        "telephone": "+91-8449488090",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "A-116/117, Okhla Phase II",
+            "addressLocality": "New Delhi",
+            "postalCode": "110020",
+            "addressCountry": "IN"
+        },
+        "areaServed": { "@type": "City", "name": city.name },
+        "sameAs": ["https://aiclex.in"]
+    };
+
     // Build JSON-LD FAQs
     const faqSchema = {
         "@context": "https://schema.org",
@@ -179,7 +210,9 @@ export default async function DynamicSEOLandingPage({ params, searchParams }: { 
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30 flex flex-col pt-16">
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+            <Script id="faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+            <Script id="breadcrumb-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+            <Script id="localbusiness-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
             <Navbar />
 
             <main className="flex-1">

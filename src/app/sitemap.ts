@@ -6,21 +6,21 @@ import { eq } from 'drizzle-orm';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://dhandaleads.com'; // Replace with actual production URL
 
-    // Define all static pages
     const routes: MetadataRoute.Sitemap = [
-        '',
-        '/pricing',
-        '/contact',
-        '/partnership',
-        '/privacy',
-        '/terms',
-        '/refunds',
-    ].map((route) => ({
-        url: `${baseUrl}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: route === '' ? 1 : 0.8,
-    }));
+        { url: `${baseUrl}`, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
+        { url: `${baseUrl}/pricing`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+        { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/blog/b2b-lead-generation-india-2025`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+        { url: `${baseUrl}/blog/best-lead-generation-tools-india`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+        { url: `${baseUrl}/blog/whatsapp-marketing-b2b-india`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+        { url: `${baseUrl}/get-leads-fast`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/partnership`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
+        { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
+        { url: `${baseUrl}/refunds`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
+    ];
 
     try {
         // Fetch active cities and keywords for dynamic SEO URLs

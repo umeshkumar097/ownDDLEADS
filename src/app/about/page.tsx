@@ -2,15 +2,46 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FounderImage from '@/components/FounderImage';
 import { Linkedin } from 'lucide-react';
+import Script from 'next/script';
 
 export const metadata = {
-    title: 'About Us | DhandaLeads',
-    description: 'Learn about Aiclex Technologies and the vision driving DhandaLeads.',
+    title: 'About Aiclex Technologies — Founders Behind DhandaLeads',
+    description: 'Meet Umesh Kumar, founder of Aiclex Technologies and DhandaLeads. With 8+ years in digital marketing and AI automation, we build India\'s most trusted B2B lead generation platform.',
+    keywords: ['Aiclex Technologies', 'Umesh Kumar', 'DhandaLeads founder', 'B2B lead generation company India', 'Aiclex Technologies New Delhi'],
+    openGraph: {
+        title: 'About Aiclex Technologies — Founders Behind DhandaLeads',
+        description: 'Meet the team building India\'s most powerful B2B data engine.',
+        url: 'https://dhandaleads.com/about',
+    },
+    alternates: { canonical: 'https://dhandaleads.com/about' }
+};
+
+const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Umesh Kumar",
+    "jobTitle": "Founder & CEO",
+    "url": "https://linkedin.com/in/iukbsr",
+    "sameAs": ["https://linkedin.com/in/iukbsr", "https://aiclex.in"],
+    "worksFor": {
+        "@type": "Organization",
+        "name": "Aiclex Technologies",
+        "url": "https://dhandaleads.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "A-116/117, Okhla Phase II",
+            "addressLocality": "New Delhi",
+            "postalCode": "110020",
+            "addressCountry": "IN"
+        }
+    },
+    "knowsAbout": ["B2B Lead Generation", "Digital Marketing", "AI Automation", "SaaS", "Sales Technology"]
 };
 
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-emerald-500/30">
+            <Script id="person-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }} />
             <Navbar />
 
             <div className="flex-grow max-w-7xl mx-auto px-6 py-20 w-full">

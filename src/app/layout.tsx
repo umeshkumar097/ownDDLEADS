@@ -19,34 +19,54 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://dhandaleads.com"),
-  title: "DhandaLeads | B2B Leads Generation & High Quality Leads",
-  description: "The smartest B2B data engine for Indian businesses. Find, verify, and close leads on autopilot. Buy HNI leads and organic leads generation.",
+  title: {
+    default: "DhandaLeads | B2B Lead Generation India",
+    template: "%s | DhandaLeads"
+  },
+  description: "India's smartest B2B data engine. Discover, verify, and close leads on autopilot. Trusted by 500+ Indian businesses for high-quality lead generation.",
   keywords: [
-    "B2B leads generation",
-    "B2B leads genenrations",
-    "organic leads generation",
-    "orginc leads genration",
-    "high quality leads generation",
-    "high qauilty leads generations",
-    "buy HNI leads",
-    "leads buy HNI",
-    "leads generations",
-    "leads genrations",
-    "Indian B2B database",
-    "business leads India"
+    "B2B lead generation India",
+    "B2B leads India",
+    "buy business leads India",
+    "lead generation company India",
+    "B2B database India",
+    "verified business leads",
+    "HNI leads India",
+    "business contact database",
+    "sales leads India",
+    "lead generation tool India",
+    "WhatsApp leads India",
+    "organic lead generation",
+    "high quality leads",
+    "Aiclex Technologies",
+    "DhandaLeads"
   ],
-  authors: [{ name: "Aiclex Technologies" }],
+  authors: [{ name: "Aiclex Technologies", url: "https://aiclex.in" }],
+  creator: "Aiclex Technologies",
+  publisher: "DhandaLeads",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' }
+  },
   alternates: {
-    canonical: '/',
+    canonical: 'https://dhandaleads.com',
   },
   openGraph: {
-    title: "DhandaLeads | B2B Leads Generation",
-    description: "The smartest B2B data engine for Indian businesses. Find, verify, and close leads on autopilot.",
+    title: "DhandaLeads | B2B Lead Generation India",
+    description: "India's smartest B2B data engine. Discover, verify, and close leads on autopilot.",
     url: "https://dhandaleads.com",
     siteName: "DhandaLeads",
     locale: "en_IN",
     type: "website",
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'DhandaLeads - B2B Lead Generation India' }]
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DhandaLeads | B2B Lead Generation India',
+    description: "India's smartest B2B data engine. Find, verify, and close leads on autopilot.",
+    images: ['/og-image.png'],
+  }
 };
 
 export default function RootLayout({
@@ -70,7 +90,54 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Google Analytics & Google Ads */}
+        {/* Organization + WebSite JSON-LD Structured Data */}
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "Aiclex Technologies",
+                "url": "https://dhandaleads.com",
+                "logo": "https://dhandaleads.com/logo.png",
+                "description": "India's leading B2B lead generation platform. Discover and verify business contacts across India.",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "A-116/117, Okhla Phase II",
+                  "addressLocality": "New Delhi",
+                  "postalCode": "110020",
+                  "addressCountry": "IN"
+                },
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "telephone": "+91-8449488090",
+                  "contactType": "customer support",
+                  "availableLanguage": ["English", "Hindi"]
+                },
+                "sameAs": [
+                  "https://aiclex.in",
+                  "https://linkedin.com/in/iukbsr"
+                ]
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "DhandaLeads",
+                "url": "https://dhandaleads.com",
+                "description": "India's smartest B2B lead generation engine",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://dhandaleads.com/solutions/lead-generation-company/{search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              }
+            ])
+          }}
+        />
+        {/* Google Tag Manager */}
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-BVKJKZL9XR" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
