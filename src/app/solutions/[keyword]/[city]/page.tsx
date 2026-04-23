@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ExitIntentPopup from '@/components/ExitIntentPopup';
-export const revalidate = 2592000; // Cache for 30 days
+export const dynamic = 'force-dynamic'; // Render on demand — generateStaticParams returns []
 import { CheckCircle2, ArrowRight, BarChart3, Zap, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
