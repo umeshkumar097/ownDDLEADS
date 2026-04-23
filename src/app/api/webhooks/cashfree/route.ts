@@ -52,13 +52,25 @@ export async function POST(req: Request) {
 
         if (paymentData.payment_status === 'SUCCESS' && creditsPurchased > 0 && userId) {
 
-            // 0. Ensure we haven't processed this exact webhook before (Idempotency check via transactions)
-            const existingTxn = await db.query.allTransactions.findFirst({
+            // 0. Idempotency: Check by cf_payment_id (real gateway ID) OR by orderId (for retries before update)
+            const existingTxnByPaymentId = await db.query.allTransactions.findFirst({
                 where: eq(allTransactions.gatewayTxnId, paymentData.cf_payment_id.toString())
             });
 
-            if (existingTxn) {
-                return NextResponse.json({ received: true, message: 'Already processed' });
+            if (existingTxnByPaymentId) {
+                return NextResponse.json({ received: true, message: 'Already processed (payment_id match)' });
+            }
+
+            // Also check by orderId — in case the pending txn exists but wasn't yet updated to cf_payment_id
+            const existingTxnByOrderId = await db.query.allTransactions.findFirst({
+                where: and(
+                    eq(allTransactions.gatewayTxnId, orderId),
+                    eq(allTransactions.status, 'SUCCESS')
+                )
+            });
+
+            if (existingTxnByOrderId) {
+                return NextResponse.json({ received: true, message: 'Already processed (order_id match)' });
             }
 
             // Find the PENDING transaction we created during checkout using orderId
