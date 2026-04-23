@@ -14,26 +14,10 @@ import { Metadata } from 'next';
 import { Toaster } from 'react-hot-toast';
 import Script from 'next/script';
 
-// 1. Generate Static Params for all Keyword x City Combinations
-// NOTE: Due to Vercel/Next.js limits + build time optimization, we can either
-// pre-generate ALL or rely on dynamic evaluation on first hit.
-// Since we have ~416 routes (52 * 8), this is perfectly safe to generate statically at build time.
+// 1. Generate Static Params — return empty to avoid DB call at build time.
+// Pages are rendered dynamically on first request (ISR via revalidate).
 export async function generateStaticParams() {
-    const cities = await db.select({ slug: seoCities.slug }).from(seoCities).where(eq(seoCities.isActive, true));
-    const keywords = await db.select({ slug: seoKeywords.slug }).from(seoKeywords).where(eq(seoKeywords.isActive, true));
-
-    const params: { keyword: string, city: string }[] = [];
-
-    for (const keyword of keywords) {
-        for (const city of cities) {
-            params.push({
-                keyword: keyword.slug,
-                city: city.slug
-            });
-        }
-    }
-
-    return params;
+    return [];
 }
 
 // Cached Data Fetchers
