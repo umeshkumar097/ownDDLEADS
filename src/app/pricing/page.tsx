@@ -4,7 +4,7 @@ import PricingClientAdapter from './PricingClientAdapter';
 import { db } from '@/db';
 import { Suspense } from 'react';
 
-export const revalidate = 60; // Cache pricing details for 60 seconds
+export const dynamic = 'force-dynamic'; // Always render at request time, not build time
 
 export default async function PricingPage() {
     // Fetch dynamic pricing straight from Postgres Supabase
