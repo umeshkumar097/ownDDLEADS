@@ -47,9 +47,13 @@ export async function GET(req: Request) {
             leads: userLeads,
             credits: availableCredits,
             user: {
+                name: userRole?.name,
                 emailVerified: userRole?.emailVerified,
                 hasPurchased: hasPurchased,
-                membershipType: userRole?.membershipType || 'free'
+                membershipType: userRole?.membershipType || 'free',
+                phone: userRole?.phone || null,
+                // Google users have no password set
+                isGoogleUser: !userRole?.password,
             }
         });
 

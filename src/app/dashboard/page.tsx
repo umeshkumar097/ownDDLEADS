@@ -12,6 +12,8 @@ import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
 import WelcomeOfferPopup from '@/components/WelcomeOfferPopup';
 import AdsWelcomeOffer from '@/components/AdsWelcomeOffer';
+import TrialPackPopup from '@/components/TrialPackPopup';
+import PhoneCollectModal from '@/components/PhoneCollectModal';
 
 export default function DashboardPage() {
     return (
@@ -33,6 +35,8 @@ function DashboardContent() {
     const [newListName, setNewListName] = useState<string>('');
     const [credits, setCredits] = useState<number | string>('...');
     const [userData, setUserData] = useState<{ emailVerified: string | null, hasPurchased: boolean, membershipType: string } | null>(null);
+    const [showPhoneModal, setShowPhoneModal] = useState(false);
+    const [userName, setUserName] = useState('');
 
     const [loading, setLoading] = useState(false);
     const [jobRole, setJobRole] = useState('');
@@ -63,15 +67,34 @@ function DashboardContent() {
                 setLists(data.lists);
                 setLeads(data.leads);
                 setCredits(data.credits);
+                setUserName(data.user?.name || '');
                 setUserData({
                     emailVerified: data.user?.emailVerified || null,
                     hasPurchased: data.user?.hasPurchased || false,
                     membershipType: data.user?.membershipType || 'free'
                 });
+                // Show phone modal for Google users who have no phone number
+                if (data.user?.isGoogleUser && !data.user?.phone) {
+                    setShowPhoneModal(true);
+                }
                 if (data.lists.length > 0) setSelectedListId(data.lists[0].id);
             }
         } catch (e) {
             console.error('Failed to load library');
+        }
+    };
+
+    const handleSavePhone = async (phone: string) => {
+        const res = await fetch('/api/user/update-phone', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+        if (res.ok) {
+            setShowPhoneModal(false);
+            toast.success('Mobile number saved successfully!');
+        } else {
+            throw new Error('Failed to save');
         }
     };
 
@@ -513,7 +536,7 @@ function DashboardContent() {
                                                             onClick={() => handleUnlockLead(lead)}
                                                             className="text-xs font-bold text-indigo-300 bg-indigo-900/40 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-lg transition-all border border-indigo-500/30 shadow-[0_0_15px_-5px_rgba(79,70,229,0.5)]"
                                                         >
-                                                            Unlock (1 Credit)
+                                                            Unlock (1.5 Credits)
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -584,7 +607,7 @@ function DashboardContent() {
                                                     <td className="py-4 px-6">
                                                         <div className="flex items-center justify-center gap-2">
                                                             <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md border ${lead.emailVerified ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}><CheckCircle2 className="w-3 h-3" /> Email</div>
-                                                            <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md border ${lead.linkedinValid ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}><CheckCircle2 className="w-3 h-3" /> LinkedIn</div>
+                                                            <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md border ${lead.linkedinValid ? 'bg-emerald-500/10 border-linkedin-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}><CheckCircle2 className="w-3 h-3" /> LinkedIn</div>
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-6 text-right">
@@ -620,7 +643,7 @@ function DashboardContent() {
                             Confirm Bulk Extraction
                         </h3>
                         <p className="text-slate-400 text-center mb-8">
-                            You are about to unlock <span className="text-white font-bold">{selectedLeads.size}</span> high-quality verified leads. This will consume <span className="text-rose-400 font-bold">{selectedLeads.size} credits</span> from your balance.
+                            You are about to unlock <span className="text-white font-bold">{selectedLeads.size}</span> high-quality verified leads. This will consume <span className="text-rose-400 font-bold">{(selectedLeads.size * 1.5).toFixed(1)} credits</span> from your balance.
                         </p>
 
                         <div className="flex items-center gap-4">
@@ -639,6 +662,16 @@ function DashboardContent() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Trial Pack Popup — shown when credits = 0 */}
+            {typeof credits === 'number' && (
+                <TrialPackPopup availableCredits={credits} userName={userName} />
+            )}
+
+            {/* Phone Collection Modal — for Google OAuth users */}
+            {showPhoneModal && (
+                <PhoneCollectModal onSubmit={handleSavePhone} userName={userName} />
             )}
 
             {/* Phase 17 Welcome Offer */}

@@ -37,10 +37,10 @@ export async function POST(req: Request) {
             where: eq(creditsBalance.userId, userId),
         });
 
-        // Initialize credits if first time
+        // Initialize credits if first time — 0 free credits (must purchase Trial Pack)
         if (!balance) {
             const [newBalance] = await db.insert(creditsBalance)
-                .values({ userId, totalCredits: userRole?.role === 'pro' ? 999999 : 10 })
+                .values({ userId, totalCredits: userRole?.role === 'pro' ? 999999 : 0 })
                 .returning();
             balance = newBalance;
         }
