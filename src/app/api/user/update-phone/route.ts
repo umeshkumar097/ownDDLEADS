@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         }
 
         await db.update(users)
-            .set({ phone, updatedAt: new Date() })
+            .set({ phone })
             .where(eq(users.id, session.user.id));
 
         return NextResponse.json({ success: true });
