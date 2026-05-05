@@ -10,9 +10,9 @@ dns.setDefaultResultOrder('ipv4first');
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL!,
     ssl: { rejectUnauthorized: false },
-    max: 5,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    max: 10, // Increased for concurrent queries on wallet page
+    idleTimeoutMillis: 60000,
+    connectionTimeoutMillis: 20000, // Increased timeout to 20s
 });
 
 export const db = drizzle(pool, { schema });
