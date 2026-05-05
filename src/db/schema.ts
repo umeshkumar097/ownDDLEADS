@@ -111,8 +111,8 @@ export const creditsBalance = pgTable('credits_balance', {
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull()
     .unique(),
-  totalCredits: integer('total_credits').notNull().default(10),
-  creditsUsed: integer('credits_used').notNull().default(0),
+  totalCredits: numeric('total_credits', { precision: 15, scale: 2 }).notNull().default('10'),
+  creditsUsed: numeric('credits_used', { precision: 15, scale: 2 }).notNull().default('0'),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
@@ -122,7 +122,7 @@ export const usageLogs = pgTable('usage_logs', {
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   action: text('action').notNull(),
-  creditsDeducted: integer('credits_deducted').notNull().default(1),
+  creditsDeducted: numeric('credits_deducted', { precision: 15, scale: 2 }).notNull().default('1'),
   details: text('details'),
   timestamp: timestamp('timestamp').defaultNow().notNull(),
 });
@@ -167,7 +167,7 @@ export const creditTransactions = pgTable('credit_transactions', {
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   type: text('type').notNull(),
-  amount: integer('amount').notNull(),
+  amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
   action: text('action').notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
