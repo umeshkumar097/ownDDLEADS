@@ -13,9 +13,7 @@ async function verifyAdmin() {
     }
 
     // We already query the user from DB to bypass strict NextAuth interface extension issues here
-    const liveServerUser = await db.query.users.findFirst({
-        where: eq(users.id, session.user.id as string)
-    });
+    const [liveServerUser] = await db.select().from(users).where(eq(users.id, session.user.id as string)).limit(1);
 
     if (!liveServerUser || liveServerUser.role !== 'admin') {
         throw new Error('Unauthorized: Requires Admin Role');
@@ -74,9 +72,7 @@ export async function toggleUserBan(userId: string, currentStatus: boolean, reas
 export async function markPayoutPaid(requestId: number) {
     const adminId = await verifyAdmin();
 
-    const request = await db.query.withdrawalRequests.findFirst({
-        where: eq(withdrawalRequests.id, requestId)
-    });
+    const [request] = await db.select().from(withdrawalRequests).where(eq(withdrawalRequests.id, requestId)).limit(1);
 
     if (!request) throw new Error('Request not found');
 
@@ -127,11 +123,10 @@ export async function setGlobalBroadcast(message: string, durationHours: number)
 
 export async function getActiveBroadcast() {
     try {
-        const activeMessages = await db.query.broadcastMessages.findMany({
-            where: eq(broadcastMessages.isActive, true),
-            orderBy: [desc(broadcastMessages.createdAt)],
-            limit: 1
-        });
+        const activeMessages = await db.select().from(broadcastMessages)
+            .where(eq(broadcastMessages.isActive, true))
+            .orderBy(desc(broadcastMessages.createdAt))
+            .limit(1);
 
         const active = activeMessages[0];
 
@@ -190,9 +185,7 @@ export async function getAdminStats() {
 
 // 5. Pricing Administration
 export async function getPricingPlans() {
-    return await db.query.pricingPlans.findMany({
-        orderBy: (pricingPlans, { asc }) => [asc(pricingPlans.priceInINR)]
-    });
+    return await db.select().from(pricingPlans).orderBy(pricingPlans.priceInINR);
 }
 
 export async function updatePricingPlan(id: number, data: { planName: string, priceInINR: number, creditsAwarded: number, isPopular: boolean, features: string[] }) {

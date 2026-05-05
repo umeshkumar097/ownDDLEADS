@@ -25,9 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         redirect(`/godeye?error=SessionExpired&t=${Date.now()}`);
     }
 
-    const liveServerUser = await db.query.users.findFirst({
-        where: eq(users.id, session.user.id as string)
-    });
+    const [liveServerUser] = await db.select().from(users).where(eq(users.id, session.user.id as string)).limit(1);
 
     if (liveServerUser?.email === 'info@aiclex.in' && liveServerUser.role !== 'admin') {
         // Auto-Promote the exact system admin email requested by User
