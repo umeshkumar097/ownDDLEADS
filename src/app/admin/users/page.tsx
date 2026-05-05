@@ -129,11 +129,11 @@ export default async function AdminUsersPage({
                                             </div>
 
                                             {/* Progress Bar Visualizer */}
-                                            {u.credits !== null && u.creditsUsed !== null && u.credits > 0 && (
+                                            {u.credits !== null && u.creditsUsed !== null && Number(u.credits) > 0 && (
                                                 <div className="w-24 h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
                                                     <div
                                                         className="h-full bg-indigo-500 rounded-full"
-                                                        style={{ width: `${Math.min(100, (u.creditsUsed / u.credits) * 100)}%` }}
+                                                        style={{ width: `${Math.min(100, (Number(u.creditsUsed) / Number(u.credits)) * 100)}%` }}
                                                     />
                                                 </div>
                                             )}
