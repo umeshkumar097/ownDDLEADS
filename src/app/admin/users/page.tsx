@@ -142,7 +142,7 @@ export default async function AdminUsersPage({
                                     <td className="py-4 px-6 text-right">
                                         <UserActionMenu
                                             userId={u.id}
-                                            currentCredits={u.credits || 10}
+                                            currentCredits={Number(u.credits || 10)}
                                             isBanned={u.isBanned || false}
                                             email={u.email}
                                         />
