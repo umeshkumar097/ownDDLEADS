@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
             await tx.insert(usageLogs).values({
                 userId: userId,
                 action: 'APPSUMO_REDEMPTION',
-                creditsDeducted: 0,
+                creditsDeducted: '0',
                 details: `Redeemed Tier ${code.tierLevel} AppSumo code: ${trimmedKey}. Rewarded ${creditReward} credits.`,
             });
 
