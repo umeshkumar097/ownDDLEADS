@@ -60,12 +60,13 @@ export async function POST(req: NextRequest) {
             const existingBalance = await tx.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
             if (existingBalance.length > 0) {
                 await tx.update(creditsBalance)
-                    .set({ totalCredits: existingBalance[0].totalCredits + creditReward })
+                    .set({ totalCredits: (Number(existingBalance[0].totalCredits) + creditReward).toString() })
                     .where(eq(creditsBalance.userId, userId));
             } else {
                 await tx.insert(creditsBalance).values({
                     userId: userId,
-                    totalCredits: creditReward + 10, // Assuming +10 base free credits
+                    totalCredits: (creditReward + 10).toString(), // Assuming +10 base free credits
+                    creditsUsed: '0'
                 });
             }
 
