@@ -66,6 +66,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                         <span>User Directory</span>
                     </Link>
 
+                    <Link href="/admin/outreach" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-orange-500/5 hover:bg-orange-500/10 border border-orange-500/10 transition-colors group text-sm font-medium">
+                        <Users className="w-5 h-5 text-orange-400" />
+                        <span className="text-orange-300">Outreach Leads</span>
+                        <span className="ml-auto bg-orange-500/20 text-orange-400 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">New</span>
+                    </Link>
+
                     <Link href="/admin/transactions" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group text-sm font-medium">
                         <Wallet className="w-5 h-5 text-slate-400 group-hover:text-blue-400" />
                         <span>Ledger & Sales</span>
