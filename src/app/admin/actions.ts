@@ -32,14 +32,14 @@ export async function overrideCredits(userId: string, newTotalAmount: number, re
     if (balance.length > 0) {
         // Update existing
         await db.update(creditsBalance)
-            .set({ totalCredits: newTotalAmount })
+            .set({ totalCredits: newTotalAmount.toString() })
             .where(eq(creditsBalance.userId, userId));
     } else {
         // Create new record
         await db.insert(creditsBalance).values({
             userId: userId,
-            totalCredits: newTotalAmount,
-            creditsUsed: 0
+            totalCredits: newTotalAmount.toString(),
+            creditsUsed: '0'
         });
     }
 

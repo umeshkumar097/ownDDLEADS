@@ -24,7 +24,7 @@ export default async function OutreachPage() {
               )
         )
     )
-    .orderBy(desc(users.id))
+    .orderBy(desc(users.emailVerified)) // Sort by registration time
     .limit(200);
 
     return (

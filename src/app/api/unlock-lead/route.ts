@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             const balanceRecord = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
             const balance = balanceRecord[0];
 
-            if (!balance || (balance.totalCredits - balance.creditsUsed) < 1.5) {
+            if (!balance || (Number(balance.totalCredits) - Number(balance.creditsUsed)) < 1.5) {
                 return NextResponse.json({
                     error: "Insufficient credits to unlock lead. Each lead costs 1.5 credits.",
                     success: false,
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
             const CREDIT_COST = 1.5;
             await db.update(creditsBalance)
                 .set({
-                    creditsUsed: balance.creditsUsed + CREDIT_COST,
+                    creditsUsed: (Number(balance.creditsUsed) + CREDIT_COST).toString(),
                     updatedAt: new Date()
                 })
                 .where(eq(creditsBalance.userId, userId));
@@ -50,13 +50,13 @@ export async function POST(req: Request) {
             await db.insert(creditTransactions).values({
                 userId,
                 type: 'debit',
-                amount: CREDIT_COST,
+                amount: CREDIT_COST.toString(),
                 action: 'unlocked_lead',
                 description: `Unlocked lead contact details for ${payload.name || payload.email}`
             });
 
             // Low Credit Brevo Notification
-            const remainingCredits = balance.totalCredits - (balance.creditsUsed + 1.5);
+            const remainingCredits = Number(balance.totalCredits) - (Number(balance.creditsUsed) + 1.5);
             if (remainingCredits === 10 || remainingCredits === 0) {
                 if (userRole?.email) {
                     await sendLowCreditAlertEmail(
@@ -122,16 +122,16 @@ export async function POST(req: Request) {
             if (latestBalance[0]) {
                 await db.update(creditsBalance)
                     .set({
-                        creditsUsed: Math.max(0, latestBalance[0].creditsUsed - 1.5),
+                        creditsUsed: Math.max(0, Number(latestBalance[0].creditsUsed) - 1.5).toString(),
                         updatedAt: new Date()
                     })
                     .where(eq(creditsBalance.userId, userId));
-
+ 
                 // Log the 'credit' auto-refund transaction
                 await db.insert(creditTransactions).values({
                     userId,
                     type: 'credit',
-                    amount: 1.5,
+                    amount: '1.5',
                     action: 'refund',
                     description: `Auto-refunded 1.5 Credits: Contact ${payload.name || payload.email} failed deep verification.`
                 });

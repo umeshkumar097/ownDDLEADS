@@ -131,10 +131,8 @@ function DashboardContent() {
     };
 
     const handleUnlockLead = async (bulkLead: any) => {
-        if (!selectedListId && !newListName) {
-            toast.error('Please select or create a destination folder.');
-            return;
-        }
+        // Default folder behavior removed, all leads go to library
+
 
         const toastId = toast.loading('Unlocking and analyzing lead...');
 
@@ -144,8 +142,8 @@ function DashboardContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     payload: bulkLead._rawPayload,
-                    listId: selectedListId || null,
-                    listName: newListName || null
+                    listId: null,
+                    listName: 'Main Library'
                 })
             });
             const data = await res.json();
@@ -172,10 +170,8 @@ function DashboardContent() {
 
     const handleBulkUnlock = () => {
         if (selectedLeads.size === 0) return;
-        if (!selectedListId && !newListName) {
-            toast.error('Please select or create a destination folder.');
-            return;
-        }
+        // Default folder behavior
+
 
         setShowBulkConfirmModal(true);
     };
@@ -195,8 +191,8 @@ function DashboardContent() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         payload: bulkLead._rawPayload,
-                        listId: selectedListId || null,
-                        listName: newListName || null
+                        listId: null,
+                        listName: 'Main Library'
                     })
                 });
                 const data = await res.json();
@@ -213,10 +209,8 @@ function DashboardContent() {
             }
         }
 
-        if (newListName && !selectedListId && successCount > 0) {
-            fetchLibrary();
-            setNewListName('');
-        }
+        // No list refresh needed
+
 
         setSelectedLeads(new Set());
 
@@ -285,7 +279,8 @@ function DashboardContent() {
         document.body.removeChild(link);
     };
 
-    const displayedLeads = selectedListId ? leads.filter(l => l.listId === selectedListId) : [];
+    const displayedLeads = leads; // Show all leads without folder filtering
+
 
     if (status === 'loading') return <FullPageLoader message="Authenticating Command Center..." />;
 
@@ -322,80 +317,25 @@ function DashboardContent() {
             </nav>
 
             {/* Main Content */}
-            <main className="max-w-[1600px] w-full mx-auto px-6 pt-24 pb-20 flex flex-col xl:flex-row gap-8">
+            <main className="max-w-[1600px] w-full mx-auto px-6 pt-24 pb-20 flex flex-col gap-8">
 
-                {/* LEFT SIDEBAR */}
-                <aside className="w-full xl:w-[320px] shrink-0 flex flex-col gap-6">
+                {/* TOP STATS BAR */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Credits Block */}
                     <button
                         onClick={() => router.push('/dashboard/wallet')}
-                        className={`px-6 py-6 rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer shadow-lg w-full ${typeof credits === 'number' && credits < 10 ? 'bg-rose-500/20 border-2 border-rose-500 hover:bg-rose-500/30 animate-pulse' : 'bg-gradient-to-br from-indigo-900/40 to-black border border-indigo-500/20 hover:border-indigo-500/40'}`}
+                        className={`px-6 py-6 rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer shadow-lg ${typeof credits === 'number' && credits < 10 ? 'bg-rose-500/20 border-2 border-rose-500 hover:bg-rose-500/30 animate-pulse' : 'bg-gradient-to-br from-indigo-900/40 to-black border border-indigo-500/20 hover:border-indigo-500/40'}`}
                         title="Click to view pricing/add-on rates"
                     >
                         <span className={`text-xs font-semibold tracking-wider uppercase ${typeof credits === 'number' && credits < 10 ? 'text-rose-300' : 'text-slate-400'}`}>Available Credits</span>
                         <span className={`text-4xl mt-1 font-bold ${typeof credits === 'number' && credits < 10 ? 'text-rose-400' : 'text-indigo-400'}`}>{credits}</span>
                     </button>
 
-                    {/* Folder Management */}
-                    <div className="bg-black/30 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
-                        <h3 className="text-white font-bold mb-4 flex items-center gap-2"><FolderPlus className="w-5 h-5 text-indigo-400" /> My Folders</h3>
-                        <div className="flex flex-col gap-4">
-                            <select
-                                value={selectedListId}
-                                onChange={e => { setSelectedListId(e.target.value); setNewListName(''); }}
-                                className="w-full bg-slate-900 border border-white/10 text-sm py-3 px-3 rounded-xl text-white outline-none"
-                            >
-                                <option value="" className="text-slate-500">Select Folder</option>
-                                {lists.map(list => (
-                                    <option key={list.id} value={list.id}>{list.name}</option>
-                                ))}
-                            </select>
-
-                            <div className="flex items-center gap-2">
-                                <div className="h-[1px] flex-1 bg-white/10"></div>
-                                <span className="text-slate-600 text-[10px] font-bold uppercase tracking-wider">OR NEW</span>
-                                <div className="h-[1px] flex-1 bg-white/10"></div>
-                            </div>
-
-                            <input
-                                type="text"
-                                placeholder="Create Folder..."
-                                value={newListName}
-                                onChange={e => { setNewListName(e.target.value); setSelectedListId(''); }}
-                                className="w-full bg-slate-900 border border-white/10 text-sm py-3 px-3 rounded-xl text-white outline-none placeholder-slate-500 focus:border-indigo-500/50 transition-colors"
-                            />
-
-                            {/* Folder Delete Button */}
-                            {selectedListId && viewMode === 'list' && (
-                                <button
-                                    onClick={async () => {
-                                        if (confirm("Are you sure you want to delete this Entire Folder and all leads inside it? This cannot be undone.")) {
-                                            const toastId = toast.loading('Deleting folder...');
-                                            try {
-                                                const res = await fetch(`/api/lists?id=${selectedListId}`, { method: 'DELETE' });
-                                                if (res.ok) {
-                                                    toast.success('Folder deleted!', { id: toastId });
-                                                    setSelectedListId('');
-                                                    fetchLibrary();
-                                                } else {
-                                                    toast.error('Failed to delete folder.', { id: toastId });
-                                                }
-                                            } catch (err) {
-                                                toast.error('Error deleting folder.', { id: toastId });
-                                            }
-                                        }
-                                    }}
-                                    className="w-full mt-2 py-3 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 rounded-xl transition flex items-center justify-center gap-2 text-sm font-semibold"
-                                >
-                                    <Trash2 className="w-4 h-4" /> Delete Folder
-                                </button>
-                            )}
-                        </div>
+                    {/* Dashboard Stats (Simplified) */}
+                    <div className="md:col-span-2">
+                         <DashboardStats leads={leads} />
                     </div>
-
-                    {/* Dashboard Stats */}
-                    <DashboardStats leads={leads} />
-                </aside>
+                </div>
 
                 {/* RIGHT MAIN AREA */}
                 <div className="flex-1 min-w-0 flex flex-col gap-6">
