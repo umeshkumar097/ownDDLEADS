@@ -4,7 +4,6 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
@@ -21,11 +20,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         error: '/login',
     },
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-            allowDangerousEmailAccountLinking: true,
-        }),
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
@@ -48,10 +42,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     throw new Error("Your account has been banned due to policy violations.");
                 }
 
-                // if (!user.emailVerified) {
-                //    throw new Error("Please verify your email address first.");
-                // }
-
                 const isValid = await bcrypt.compare(credentials.password as string, user.password);
 
                 if (!isValid) {
@@ -69,16 +59,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     callbacks: {
         async jwt({ token, user, trigger, session }) {
-            // First time login
             if (user) {
                 token.id = user.id;
             }
-
-            // We removed the inline `db.query` check here because running a database
-            // hit on EVERY SINGLE authenticated request (next.js edge hydration) 
-            // exhausts the connection pool and creates a sweeping ETIMEDOUT Server Error loop.
-            // Banned status is correctly intercepted at initial login via authorize().
-
             return token;
         },
         async session({ session, token }) {

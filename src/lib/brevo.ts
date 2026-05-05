@@ -190,3 +190,38 @@ export async function sendPurchaseConfirmationEmail(email: string, name: string,
         htmlContent,
     });
 }
+
+export async function sendAdminNewUserAlert(userData: { name: string; email: string; phone: string }) {
+    const htmlContent = `
+        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+            <h2 style="color: #333;">New User Registration Alert 🚨</h2>
+            <p>A new user has just registered on <strong>DhandaLeads</strong>.</p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #eee; font-weight: bold;">Name:</td>
+                    <td style="padding: 10px; border: 1px solid #eee;">${userData.name}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #eee; font-weight: bold;">Email:</td>
+                    <td style="padding: 10px; border: 1px solid #eee;">${userData.email}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #eee; font-weight: bold;">Phone:</td>
+                    <td style="padding: 10px; border: 1px solid #eee;">${userData.phone}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #eee; font-weight: bold;">Time:</td>
+                    <td style="padding: 10px; border: 1px solid #eee;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</td>
+                </tr>
+            </table>
+            <p style="margin-top: 20px; color: #666; font-size: 12px;">This is an automated alert from DhandaLeads Infrastructure.</p>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email: 'info@aiclex.co.in', name: 'Admin' }],
+        subject: `New User Joined: ${userData.name} (${userData.email})`,
+        htmlContent,
+        senderName: 'DhandaLeads Alerts'
+    });
+}

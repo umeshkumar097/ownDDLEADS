@@ -4,7 +4,7 @@ import { users, verificationTokens } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import disposableDomains from 'disposable-email-domains';
-import { sendVerificationEmail } from '@/lib/brevo';
+import { sendVerificationEmail, sendAdminNewUserAlert } from '@/lib/brevo';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
@@ -59,6 +59,13 @@ export async function POST(req: Request) {
 
         // Send Verification Email via Brevo
         await sendVerificationEmail(newUser.email, newUser.name || 'User', token).catch(err => console.error("Verification email failed:", err));
+
+        // Notify Admin
+        await sendAdminNewUserAlert({ 
+            name: newUser.name || 'Unknown', 
+            email: newUser.email, 
+            phone: newUser.phone || 'N/A' 
+        }).catch(err => console.error("Admin alert failed:", err));
 
         return NextResponse.json({ success: true, message: 'Registration successful! Please check your email to verify your account.' }, { status: 201 });
 
