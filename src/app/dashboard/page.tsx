@@ -12,7 +12,6 @@ import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
 import WelcomeOfferPopup from '@/components/WelcomeOfferPopup';
 import AdsWelcomeOffer from '@/components/AdsWelcomeOffer';
-import TrialPackPopup from '@/components/TrialPackPopup';
 import PhoneCollectModal from '@/components/PhoneCollectModal';
 
 export default function DashboardPage() {
@@ -662,11 +661,6 @@ function DashboardContent() {
                         </div>
                     </div>
                 </div>
-            )}
-
-            {/* Trial Pack Popup — shown when credits = 0 */}
-            {typeof credits === 'number' && (
-                <TrialPackPopup availableCredits={credits} userName={userName} />
             )}
 
             {/* Phone Collection Modal — for Google OAuth users */}
