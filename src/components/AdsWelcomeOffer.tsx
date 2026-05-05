@@ -17,7 +17,7 @@ export default function AdsWelcomeOffer() {
                         <Zap className="w-4 h-4 fill-emerald-400" /> Account Activated
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight tracking-tight">
-                        You're in! Now, unlock your first <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">500 Verified Leads</span>.
+                        You're in! Now, unlock your first <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">999 Verified Leads</span>.
                     </h2>
                     <p className="text-slate-400 text-lg mb-8 leading-relaxed max-w-2xl">
                         Your dashboard is ready. To start extracting data, you need search credits. Grab our discounted Starter Pack right now to fill your pipeline instantly.
@@ -26,7 +26,7 @@ export default function AdsWelcomeOffer() {
                     <ul className="space-y-4 mb-8 md:mb-0">
                         <li className="flex items-center gap-3 text-slate-300 font-medium">
                             <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
-                            <span><strong className="text-white">500</strong> Zero-Bounce Search Credits</span>
+                            <span><strong className="text-white">999</strong> Zero-Bounce Search Credits</span>
                         </li>
                         <li className="flex items-center gap-3 text-slate-300 font-medium">
                             <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
@@ -45,14 +45,14 @@ export default function AdsWelcomeOffer() {
                     </div>
 
                     <div className="mt-4 text-slate-500 font-bold line-through mb-1 text-lg">Regular Value: ₹1,999</div>
-                    <div className="text-6xl font-black text-white mb-2">₹249</div>
+                    <div className="text-6xl font-black text-white mb-2">₹999</div>
                     <div className="text-indigo-400 text-sm mb-8 font-bold tracking-wide">Plus 18% GST</div>
 
                     <button
-                        onClick={() => router.push('/pricing?plan=249')}
+                        onClick={() => router.push('/pricing?plan=999')}
                         className="w-full px-8 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-lg font-black rounded-xl transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
                     >
-                        Buy 500 Credits <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        Buy 999 Credits <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                     <p className="text-xs text-slate-500 mt-5 flex items-center justify-center gap-2 font-medium">
                         <ShieldCheck className="w-4 h-4 text-emerald-500" /> 100% Zero-Bounce Guarantee

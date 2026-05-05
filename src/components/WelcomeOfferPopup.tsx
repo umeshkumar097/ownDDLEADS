@@ -73,7 +73,7 @@ export default function WelcomeOfferPopup({ emailVerifiedAt, hasPurchased }: Wel
         // Set a strategic query param that the pricing page can read
         // The backend `/api/checkout/cashfree` will still cryptographically verify 
         // the 24h window constraint before allowing the 50% cut.
-        router.push('/pricing?plan=249&welcome_offer=true');
+        router.push('/pricing?plan=999&welcome_offer=true');
     };
 
     if (!isVisible || !timeLeft) return null;
@@ -100,7 +100,7 @@ export default function WelcomeOfferPopup({ emailVerifiedAt, hasPurchased }: Wel
                 </h2>
                 <div className="text-center mb-8">
                     <span className="inline-block bg-gradient-to-r from-amber-400 to-orange-500 text-transparent bg-clip-text text-xl font-bold">
-                        Get 500 Credits for Just ₹249!
+                        Get 999 Credits for Just ₹999!
                     </span>
                     <p className="text-slate-400 mt-3 max-w-[90%] mx-auto">
                         As a welcome gift, unlock premium features and data points at our exclusive onboarding price. This elite offer vanishes once the timer hits zero.
@@ -135,7 +135,7 @@ export default function WelcomeOfferPopup({ emailVerifiedAt, hasPurchased }: Wel
                     onClick={handleClaim}
                     className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold py-4 px-6 rounded-xl shadow-[0_0_30px_-5px_rgba(245,158,11,0.5)] transition-all flex items-center justify-center gap-3 text-lg group"
                 >
-                    Claim Your ₹249 Starter Pack Now
+                    Claim Your ₹999 Starter Pack Now
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
 

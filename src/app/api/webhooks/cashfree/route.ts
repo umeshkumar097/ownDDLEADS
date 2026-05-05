@@ -111,7 +111,7 @@ export async function POST(req: Request) {
             } else {
                 await db.insert(creditsBalance).values({
                     userId: userId,
-                    totalCredits: 10 + creditsPurchased,
+                    totalCredits: creditsPurchased, // No free credits baseline
                     creditsUsed: 0
                 });
             }

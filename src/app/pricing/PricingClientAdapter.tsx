@@ -134,11 +134,11 @@ export default function PricingClientAdapter({ plans }: { plans: any[] }) {
                     let actualCheckoutPrice = plan.priceInINR * 100; // in cents
                     let btnText = "Buy Now";
 
-                    if (isWelcomeOffer && plan.priceInINR === 499) {
-                        actualCheckoutPrice = 24900; // Passes explicitly 24900 to Cashfree (₹249)
-                        displayPrice = "249";
-                        strikePrice = "499";
-                        btnText = "Claim ₹249 Full Pack";
+                    if (isWelcomeOffer && plan.priceInINR === 999) {
+                        actualCheckoutPrice = 99900; // ₹999 in paise
+                        displayPrice = "999";
+                        strikePrice = "1999";
+                        btnText = "Claim ₹999 Full Pack (999 Credits)";
                     }
 
                     return (

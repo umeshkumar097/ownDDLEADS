@@ -74,7 +74,7 @@ export async function POST(req: Request) {
                 sourceCity: sourceCity || "",
                 sourceKeyword: sourceKeyword || "",
                 taxApplied: taxAmount.toFixed(2),
-                welcomeOfferUsed: priceInCents === 24900 ? "TRUE" : "FALSE",
+                welcomeOfferUsed: priceInCents === 99900 ? "TRUE" : "FALSE",
                 companyName: companyName?.substring(0, 50) || "",
                 gstNumber: gstNumber?.substring(0, 20) || "",
             }
