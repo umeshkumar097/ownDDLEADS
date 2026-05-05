@@ -102,7 +102,7 @@ export async function GET(req: Request) {
                 // for MVP, we'll blast the warning directly if they hit this threshold natively
 
                 if (wallet.phone) {
-                    const remaining = wallet.credits - wallet.used;
+                    const remaining = Number(wallet.credits) - Number(wallet.used);
                     const msg = `⚠️ Alert ${wallet.name}! Your DhandaLeads data pipeline has only ${remaining} credits remaining. Recharge now to keep extracting verified B2B leads.`;
 
                     const success = await sendWhatsAppMessage(wallet.phone, msg, 'LOW_CREDIT', wallet.userId as string);
