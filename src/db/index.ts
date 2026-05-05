@@ -1,13 +1,18 @@
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from './schema';
+import dns from 'dns';
 
-// Standard PostgreSQL connection — works with Supabase, Railway, any standard PG host
+// Force IPv4 DNS resolution — fixes ETIMEDOUT on VPS servers with broken IPv6
+dns.setDefaultResultOrder('ipv4first');
+
+// Standard pg Pool — works with Neon (pgbouncer/pooler URL) and Supabase
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL!,
-    ssl: { rejectUnauthorized: false }, // Required for Supabase SSL
-    max: 10,
+    ssl: { rejectUnauthorized: false },
+    max: 5,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
 });
 
 export const db = drizzle(pool, { schema });
-
