@@ -28,9 +28,22 @@ async function verifyAdmin() {
 export async function overrideCredits(userId: string, newTotalAmount: number, reason: string) {
     const adminId = await verifyAdmin();
 
-    await db.update(creditsBalance)
-        .set({ totalCredits: newTotalAmount })
-        .where(eq(creditsBalance.userId, userId));
+    // Check if balance record exists
+    const balance = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
+
+    if (balance.length > 0) {
+        // Update existing
+        await db.update(creditsBalance)
+            .set({ totalCredits: newTotalAmount })
+            .where(eq(creditsBalance.userId, userId));
+    } else {
+        // Create new record
+        await db.insert(creditsBalance).values({
+            userId: userId,
+            totalCredits: newTotalAmount,
+            creditsUsed: 0
+        });
+    }
 
     await db.insert(adminAuditLogs).values({
         adminId: adminId,
