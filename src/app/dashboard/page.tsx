@@ -5,9 +5,9 @@ import Image from 'next/image';
 import { Search, Users, SearchCode, Lock, Building2, PhoneCall, Mail, ExternalLink, Download, LayoutGrid, CheckCircle2, ChevronRight, Activity, FolderPlus, Trash2 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Papa from 'papaparse';
 import toast, { Toaster } from 'react-hot-toast';
-import DashboardStats from '@/components/DashboardStats';
 import FloatingAIWidget from '@/components/FloatingAIWidget';
 import FullPageLoader from '@/components/FullPageLoader';
 import WelcomeOfferPopup from '@/components/WelcomeOfferPopup';
@@ -285,105 +285,159 @@ function DashboardContent() {
     if (status === 'loading') return <FullPageLoader message="Authenticating Command Center..." />;
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-[#020617] text-white font-sans selection:bg-indigo-500/30 overflow-x-hidden">
+            <style jsx global>{`
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 8s linear infinite;
+                }
+                .mesh-gradient {
+                    background-color: #020617;
+                    background-image: 
+                        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+                }
+            `}</style>
+            <div className="fixed inset-0 mesh-gradient -z-10" />
             <Toaster position="bottom-right" />
+            
             {/* Navbar */}
-            <nav className="border-b border-white/10 bg-black/20 backdrop-blur-lg fixed top-0 w-full z-10 transition-all">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center">
-                        <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-8 w-auto object-contain cursor-pointer transform hover:scale-105 transition-transform" />
-                    </div>
-                    <div className="flex items-center gap-4 md:gap-6">
-                        <div className="flex flex-col items-end md:items-start md:flex-row md:items-center gap-2">
-                            <span className="text-sm text-slate-400 hidden sm:inline-block">Welcome, <span className="text-white font-medium">{session?.user?.name || 'User'}</span></span>
-                            {userData?.membershipType === 'LTD' && (
-                                <span className="hidden md:flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-500 border border-yellow-500/30 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-                                    <Activity className="w-3 h-3" /> AppSumo LTD
-                                </span>
-                            )}
+            <motion.nav 
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                className="border-b border-white/5 bg-slate-950/50 backdrop-blur-2xl fixed top-0 w-full z-[50] transition-all"
+            >
+                <div className="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-8">
+                        <Image src="/logo.png" width={160} height={40} alt="DhandaLeads" className="h-9 w-auto object-contain cursor-pointer transform hover:scale-105 transition-transform" />
+                        
+                        <div className="hidden xl:flex items-center gap-1 bg-white/5 border border-white/5 rounded-2xl p-1">
+                             <button className="px-4 py-1.5 text-xs font-bold bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">Discovery</button>
+                             <button onClick={() => router.push('/dashboard/wallet')} className="px-4 py-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors">Billing</button>
+                             <button onClick={() => router.push('/dashboard/partnership')} className="px-4 py-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors">Affiliate</button>
                         </div>
-                        <button onClick={() => router.push('/dashboard/partnership')} className="text-sm font-bold px-4 py-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 rounded-full hidden md:flex items-center gap-2 transition-all">
-                            Affiliate 🔥
+                    </div>
+
+                    <div className="flex items-center gap-3 md:gap-4">
+                        <div className="hidden sm:flex flex-col items-end mr-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Command Center</span>
+                            <span className="text-sm text-white font-medium">{session?.user?.name || 'User'}</span>
+                        </div>
+
+                        <div className="h-10 w-[1px] bg-white/10 hidden md:block mx-2" />
+
+                        <button onClick={() => router.push('/dashboard/api-keys')} className="p-2.5 bg-white/5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 border border-white/5 rounded-xl transition-all hidden lg:flex" title="API Keys">
+                            <Lock className="w-5 h-5" />
                         </button>
-                        <button onClick={() => router.push('/dashboard/api-keys')} className="text-sm font-medium px-4 py-2 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-full transition-all flex items-center gap-2 hidden lg:flex">
-                            <Lock className="w-4 h-4" /> API Keys
-                        </button>
-                        <button onClick={() => router.push('/dashboard/wallet')} className="text-sm font-medium px-4 py-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-full transition-all">
-                            Load Credits
-                        </button>
-                        <button onClick={() => signOut()} className="text-sm text-slate-400 hover:text-white transition-colors">Logout</button>
+
+                        <button onClick={() => signOut()} className="px-4 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all">Logout</button>
+                        
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 p-[2px] hidden sm:block">
+                            <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-sm font-black">
+                                {session?.user?.name?.charAt(0) || 'U'}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </nav>
+            </motion.nav>
 
-            {/* Main Content */}
-            <main className="max-w-[1600px] w-full mx-auto px-6 pt-24 pb-20 flex flex-col gap-8">
+            {/* Main Content Area */}
+            <main className="max-w-[1400px] mx-auto px-6 pt-24 pb-20 flex flex-col gap-8">
+                
+                {/* COMPACT STATS BAR */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 p-4 rounded-3xl shadow-xl">
+                    <div className="flex items-center gap-6 px-4">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Available Fuel</span>
+                            <div className="flex items-baseline gap-2">
+                                <span className={`text-3xl font-black tracking-tighter ${typeof credits === 'number' && credits < 10 ? 'text-rose-400' : 'text-white'}`}>{credits}</span>
+                                <span className="text-[10px] font-bold text-slate-500 uppercase">Credits</span>
+                            </div>
+                        </div>
+                        
+                        <div className="h-8 w-[1px] bg-white/10" />
+                        
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Status</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-xs font-bold text-white uppercase tracking-wider">Ready</span>
+                            </div>
+                        </div>
+                    </div>
 
-                {/* TOP STATS BAR */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Credits Block */}
-                    <button
-                        onClick={() => router.push('/dashboard/wallet')}
-                        className={`px-6 py-6 rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer shadow-lg ${typeof credits === 'number' && credits < 10 ? 'bg-rose-500/20 border-2 border-rose-500 hover:bg-rose-500/30 animate-pulse' : 'bg-gradient-to-br from-indigo-900/40 to-black border border-indigo-500/20 hover:border-indigo-500/40'}`}
-                        title="Click to view pricing/add-on rates"
-                    >
-                        <span className={`text-xs font-semibold tracking-wider uppercase ${typeof credits === 'number' && credits < 10 ? 'text-rose-300' : 'text-slate-400'}`}>Available Credits</span>
-                        <span className={`text-4xl mt-1 font-bold ${typeof credits === 'number' && credits < 10 ? 'text-rose-400' : 'text-indigo-400'}`}>{credits}</span>
-                    </button>
-
-                    {/* Dashboard Stats (Simplified) */}
-                    <div className="md:col-span-2">
-                         <DashboardStats leads={leads} />
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={() => router.push('/dashboard/wallet')}
+                            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                        >
+                            + Load Credits
+                        </button>
+                        <button 
+                            onClick={() => router.push('/dashboard/api-keys')}
+                            className="p-3 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-2xl transition-all border border-white/5"
+                            title="API Keys"
+                        >
+                            <Lock className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
 
-                {/* RIGHT MAIN AREA */}
-                <div className="flex-1 min-w-0 flex flex-col gap-6">
+                {/* Audience Discovery Area */}
+                <div className="flex flex-col gap-6">
                     {/* Header */}
-                    <div className="mb-2">
-                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">Audience Discovery</h1>
-                        <p className="text-slate-400 max-w-xl text-lg">Harness AI and smart proxy routing to extract highly verified B2B & B2C contacts globally.</p>
+                    <div className="text-center md:text-left">
+                        <h1 className="text-4xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Audience Discovery</h1>
+                        <p className="text-slate-500 max-w-xl text-base font-medium">Extract highly verified B2B contacts with AI-powered intelligence.</p>
                     </div>
-
-                    {/* New User Ads Offer Banner (Triggered when 0 credits + never purchased) */}
-                    {credits === 0 && userData?.hasPurchased === false && (
-                        <AdsWelcomeOffer />
-                    )}
 
                     {/* Search Engine Area */}
-                    <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/20 rounded-3xl p-8 mb-4 shadow-[0_0_40px_-15px_rgba(79,70,229,0.3)]">
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                            <div className="col-span-12 md:col-span-5 relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400 group-focus-within:text-indigo-300 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Job Role (e.g. CTO, Marketing Head)"
-                                    value={jobRole}
-                                    onChange={e => setJobRole(e.target.value)}
-                                    className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-inner"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-4 relative group">
-                                <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 group-focus-within:text-purple-300 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="Location (e.g. San Francisco, CA)"
-                                    value={location}
-                                    onChange={e => setLocation(e.target.value)}
-                                    className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all shadow-inner"
-                                />
-                            </div>
-                            <div className="col-span-12 md:col-span-3 flex">
-                                <button
-                                    onClick={() => handleSearch(null)}
-                                    disabled={loading || jobRole.trim().length < 3 || location.trim().length < 3}
-                                    className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:hover:bg-indigo-600 text-white font-bold rounded-2xl py-4 px-6 flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                                >
-                                    {loading ? <span className="animate-pulse">Searching...</span> : <><SearchCode className="w-5 h-5" /> Get Leads</>}
-                                </button>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="relative group"
+                    >
+                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-[2.5rem] blur opacity-10 group-focus-within:opacity-20 transition-opacity" />
+                        
+                        <div className="relative bg-slate-900/60 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                                <div className="lg:col-span-5 relative">
+                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Job Role (e.g. CEO, Founder)"
+                                        value={jobRole}
+                                        onChange={e => setJobRole(e.target.value)}
+                                        className="w-full bg-black/40 border border-white/5 rounded-2xl pl-16 pr-6 py-5 text-white text-base placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                    />
+                                </div>
+                                
+                                <div className="lg:col-span-4 relative">
+                                    <Users className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Location (e.g. London)"
+                                        value={location}
+                                        onChange={e => setLocation(e.target.value)}
+                                        className="w-full bg-black/40 border border-white/5 rounded-2xl pl-16 pr-6 py-5 text-white text-base placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
+                                    />
+                                </div>
+
+                                <div className="lg:col-span-3">
+                                    <button
+                                        onClick={() => handleSearch(null)}
+                                        disabled={loading || jobRole.trim().length < 3 || location.trim().length < 3}
+                                        className="w-full bg-white text-black hover:bg-slate-200 disabled:bg-slate-800 disabled:text-slate-500 font-black uppercase tracking-widest text-xs rounded-2xl py-5 px-6 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-white/5"
+                                    >
+                                        {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <><SearchCode className="w-5 h-5" /> Get Leads</>}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* View Toggles */}
                     <div className="flex flex-col sm:flex-row items-center justify-between pb-4 border-b border-white/10 gap-4">
@@ -563,6 +617,7 @@ function DashboardContent() {
                         </div>
                     )}
 
+                    </div>
                 </div>
             </main>
             <FloatingAIWidget leadsCount={leads.length} />
