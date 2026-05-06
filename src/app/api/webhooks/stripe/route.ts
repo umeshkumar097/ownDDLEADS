@@ -40,13 +40,13 @@ export async function POST(req: Request) {
 
                 if (currentBalance) {
                     await db.update(creditsBalance)
-                        .set({ totalCredits: currentBalance.totalCredits + creditsPurchased })
+                        .set({ totalCredits: (Number(currentBalance.totalCredits) + creditsPurchased).toString() })
                         .where(eq(creditsBalance.userId, userId));
                 } else {
                     await db.insert(creditsBalance).values({
                         userId: userId,
-                        totalCredits: 10 + creditsPurchased,
-                        creditsUsed: 0
+                        totalCredits: (10 + creditsPurchased).toString(),
+                        creditsUsed: '0'
                     });
                 }
 
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
                 await db.insert(creditTransactions).values({
                     userId: userId,
                     type: 'credit',
-                    amount: creditsPurchased,
+                    amount: creditsPurchased.toString(),
                     action: 'purchased',
                     description: `Purchased ${creditsPurchased} Lead Credits via Stripe`
                 });

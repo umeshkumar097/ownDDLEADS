@@ -40,12 +40,16 @@ export async function POST(req: Request) {
         // Initialize credits if first time — 0 free credits (must purchase Trial Pack)
         if (!balance) {
             const [newBalance] = await db.insert(creditsBalance)
-                .values({ userId, totalCredits: userRole?.role === 'pro' ? 999999 : 0 })
+                .values({ 
+                    userId, 
+                    totalCredits: userRole?.role === 'pro' ? '999999' : '0',
+                    creditsUsed: '0' 
+                })
                 .returning();
             balance = newBalance;
         }
 
-        if (balance.totalCredits - balance.creditsUsed <= 0 && userRole?.role !== 'pro') {
+        if (Number(balance.totalCredits) - Number(balance.creditsUsed) <= 0 && userRole?.role !== 'pro') {
             return NextResponse.json(
                 { error: 'Insufficient credits. Upgrade to Pro for unlimited leads.' },
                 { status: 403 }
@@ -156,11 +160,11 @@ Return ONLY a valid JSON object with exactly these 3 string keys: {"email": "...
             await db.insert(usageLogs).values({
                 userId,
                 action: 'generate_lead',
-                creditsDeducted: 1,
+                creditsDeducted: '1',
             });
 
             // Low Credit Brevo Notification
-            const remainingCredits = balance.totalCredits - (balance.creditsUsed + 1);
+            const remainingCredits = Number(balance.totalCredits) - (Number(balance.creditsUsed) + 1);
             if (remainingCredits === 10 || remainingCredits === 0) {
                 if (userRole?.email) {
                     await sendLowCreditAlertEmail(
@@ -175,7 +179,7 @@ Return ONLY a valid JSON object with exactly these 3 string keys: {"email": "...
             await db.insert(usageLogs).values({
                 userId,
                 action: 'generate_lead',
-                creditsDeducted: 0,
+                creditsDeducted: '0',
             });
         }
 

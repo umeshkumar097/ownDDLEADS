@@ -24,7 +24,7 @@ export async function GET() {
             .limit(1);
 
         if (balanceRecord.length > 0) {
-            availableCredits = Math.max(0, balanceRecord[0].totalCredits - balanceRecord[0].creditsUsed);
+            availableCredits = Math.max(0, Number(balanceRecord[0].totalCredits) - Number(balanceRecord[0].creditsUsed));
         }
 
         return NextResponse.json({ transactions, availableCredits });

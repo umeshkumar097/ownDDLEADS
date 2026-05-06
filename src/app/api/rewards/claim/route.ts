@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         if (balance) {
             await db.update(creditsBalance)
                 .set({
-                    totalCredits: balance.totalCredits + 5,
+                    totalCredits: (Number(balance.totalCredits) + 5).toString(),
                     updatedAt: new Date()
                 })
                 .where(eq(creditsBalance.userId, userId));
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         await db.insert(usageLogs).values({
             userId,
             action: 'daily_reward',
-            creditsDeducted: -5, // Negative deduction represents addition in logs
+            creditsDeducted: '-5', // Negative deduction represents addition in logs
             details: `Claimed daily reward. New streak: ${newStreak} days.`
         });
 

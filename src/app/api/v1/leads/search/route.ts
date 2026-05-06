@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         // 4. Verify Balance
         const balanceRecords = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
 
-        if (balanceRecords.length === 0 || balanceRecords[0].totalCredits < API_COST) {
+        if (balanceRecords.length === 0 || Number(balanceRecords[0].totalCredits) < API_COST) {
             return NextResponse.json({ error: `Insufficient Credits. This API call requires ${API_COST} credits.` }, { status: 402 });
         }
 
@@ -58,8 +58,8 @@ export async function POST(req: NextRequest) {
         // 6. Deduct Credits
         await db.update(creditsBalance)
             .set({
-                totalCredits: balance.totalCredits - API_COST,
-                creditsUsed: balance.creditsUsed + API_COST,
+                totalCredits: (Number(balance.totalCredits) - API_COST).toString(),
+                creditsUsed: (Number(balance.creditsUsed) + API_COST).toString(),
                 updatedAt: new Date()
             })
             .where(eq(creditsBalance.userId, userId));
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
         await db.insert(usageLogs).values({
             userId,
             action: 'enterprise_api_search',
-            creditsDeducted: API_COST,
+            creditsDeducted: API_COST.toString(),
             details: `API Search: ${industry} in ${city} (Returned ${leads.length} leads)`,
             timestamp: new Date()
         });
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
             success: true,
             meta: {
                 creditsDeducted: API_COST,
-                remainingCredits: balance.totalCredits - API_COST,
+                remainingCredits: Number(balance.totalCredits) - API_COST,
                 resultsCount: leads.length,
             },
             data: leads,
