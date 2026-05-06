@@ -617,6 +617,7 @@ function DashboardContent() {
                         </div>
                     )}
 
+                </div>
             </main>
             <FloatingAIWidget leadsCount={leads.length} />
 
