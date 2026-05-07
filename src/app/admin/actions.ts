@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { users, creditsBalance, adminAuditLogs, withdrawalRequests, broadcastMessages, pricingPlans } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
+import { sendBonusCreditsEmail } from '@/lib/brevo';
 
 // Utility to verify Admin permissions
 async function verifyAdmin() {
@@ -26,10 +27,16 @@ async function verifyAdmin() {
 export async function overrideCredits(userId: string, newTotalAmount: number, reason: string) {
     const adminId = await verifyAdmin();
 
+    // Fetch user details to get email/name for notification
+    const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (!user) throw new Error('User not found');
+
     // Check if balance record exists
     const balance = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
 
+    let oldTotal = 0;
     if (balance.length > 0) {
+        oldTotal = Number(balance[0].totalCredits || '0');
         // Update existing
         await db.update(creditsBalance)
             .set({ totalCredits: newTotalAmount.toString() })
@@ -43,10 +50,21 @@ export async function overrideCredits(userId: string, newTotalAmount: number, re
         });
     }
 
+    // Phase: Notify User if credits were ADDED
+    if (newTotalAmount > oldTotal) {
+        const delta = newTotalAmount - oldTotal;
+        try {
+            await sendBonusCreditsEmail(user.email, user.name || 'DhandaLeads Member', delta);
+        } catch (error) {
+            console.error("Failed to send credit bonus email:", error);
+            // We don't throw here to avoid failing the DB transaction just because of email failure
+        }
+    }
+
     await db.insert(adminAuditLogs).values({
         adminId: adminId,
         actionType: 'CREDIT_OVERRIDE',
-        description: `Set total credits to ${newTotalAmount}. Reason: ${reason}`,
+        description: `Set total credits to ${newTotalAmount} (Old: ${oldTotal}). Reason: ${reason}`,
         targetId: userId
     });
     return { success: true };

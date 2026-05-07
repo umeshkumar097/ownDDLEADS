@@ -225,3 +225,41 @@ export async function sendAdminNewUserAlert(userData: { name: string; email: str
         senderName: 'DhandaLeads Alerts'
     });
 }
+
+export async function sendBonusCreditsEmail(email: string, name: string, creditsAdded: number) {
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0f172a; padding: 40px; border-radius: 16px; color: #f8fafc; border: 1px solid #818cf8; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500"></div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #818cf8; margin: 0; font-size: 28px; letter-spacing: -0.5px;">DhandaLeads Reward</h1>
+                <p style="color: #64748b; font-size: 14px; margin-top: 4px; text-transform: uppercase; letter-spacing: 2px;">Exclusive Member Gift</p>
+            </div>
+
+            <h2 style="color: #f1f5f9; font-size: 22px; text-align: center;">Surprise! You've received a gift 🎁</h2>
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; text-align: center;">Hi ${name}, we've just topped up your wallet with some bonus credits to help you accelerate your lead generation journey.</p>
+            
+            <div style="background-color: rgba(129, 140, 248, 0.1); border: 2px dashed #818cf8; border-radius: 20px; padding: 32px; margin: 32px 0; text-align: center;">
+                <div style="color: #818cf8; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px;">Credits Unlocked</div>
+                <span style="font-size: 54px; font-weight: 900; color: #ffffff; text-shadow: 0 0 20px rgba(129, 140, 248, 0.4);">+${creditsAdded}</span>
+                <p style="color: #94a3b8; margin-top: 12px; font-size: 14px; font-weight: 600;">Valid for Premium B2B Extractions</p>
+            </div>
+            
+            <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; text-align: center;">These credits are now active in your account. You can start using them immediately to discover high-value prospects.</p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <a href="${process.env.NEXTAUTH_URL}/dashboard" style="background-color: #818cf8; color: #ffffff; padding: 18px 36px; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 8px 24px rgba(129, 140, 248, 0.3);">Go to Dashboard</a>
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e293b; text-align: center;">
+                <p style="color: #475569; font-size: 12px;">This is a complimentary reward from DhandaLeads Administration.</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email, name }],
+        subject: `🎁 Surprise: We just added ${creditsAdded} bonus credits to your wallet!`,
+        htmlContent,
+    });
+}
