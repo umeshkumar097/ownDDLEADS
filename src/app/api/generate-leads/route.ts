@@ -164,7 +164,7 @@ Return ONLY a valid JSON object with exactly these 3 string keys: {"email": "...
             });
 
             // Low Credit Brevo Notification
-            const remainingCredits = Number(balance.totalCredits) - (Number(balance.creditsUsed) + 1);
+            const remainingCredits = balance ? (Number(balance.totalCredits) - (Number(balance.creditsUsed) + 1)) : 0;
             if (remainingCredits === 10 || remainingCredits === 0) {
                 if (userRole?.email) {
                     await sendLowCreditAlertEmail(
