@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { MoreVertical, ShieldBan, ShieldCheck, Database, Plus, Minus } from 'lucide-react';
 import { updateUserCredits, toggleUserBan } from '../actions';
