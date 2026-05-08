@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set timeout 60
+set password "dzDnnoI6NMQo1N7g"
+spawn ssh -o StrictHostKeyChecking=no root@203.57.85.2 "cd /var/www/dhandaleads && pm2 delete dhandaleads || true && pm2 start npm --name 'dhandaleads' -- start -- -p 3002"
+expect {
+    "*?assword:*" {
+        send "$password\r"
+        exp_continue
+    }
+    eof
+}

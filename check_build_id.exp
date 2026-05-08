@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set timeout 30
+set password "dzDnnoI6NMQo1N7g"
+spawn ssh -o StrictHostKeyChecking=no root@203.57.85.2 "ls -la /var/www/dhandaleads/.next/BUILD_ID"
+expect {
+    "*?assword:*" {
+        send "$password\r"
+        exp_continue
+    }
+    eof
+}

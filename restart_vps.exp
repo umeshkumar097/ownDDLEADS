@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set timeout 30
+set password "dzDnnoI6NMQo1N7g"
+spawn ssh -o StrictHostKeyChecking=no root@203.57.85.2 "pm2 list && pm2 restart dhandaleads && pm2 logs dhandaleads --lines 20 --no-daemon"
+expect {
+    "*?assword:*" {
+        send "$password\r"
+        exp_continue
+    }
+    eof
+}
