@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export default async function AgencyUsersPage() {
     const session = await auth();
 
-    if (!session || (session.user.role !== 'agency_admin' && session.user.role !== 'admin')) {
+    if (!session?.user || (session.user.role !== 'agency_admin' && session.user.role !== 'admin')) {
         redirect('/login');
     }
 

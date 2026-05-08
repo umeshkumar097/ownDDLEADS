@@ -7,7 +7,7 @@ import { eq, count } from 'drizzle-orm';
 export default async function AgencyDashboard() {
   const session = await auth();
 
-  if (!session || (session.user.role !== 'agency_admin' && session.user.role !== 'admin')) {
+  if (!session?.user || (session.user.role !== 'agency_admin' && session.user.role !== 'admin')) {
     redirect('/login');
   }
 
