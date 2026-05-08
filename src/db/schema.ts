@@ -45,7 +45,7 @@ export const agencies = pgTable('agencies', {
   logoUrl: text('logo_url'),
   faviconUrl: text('favicon_url'),
   brandColor: text('brand_color').default('#0f172a'), // Default indigo-950
-  adminId: text('admin_id').references(() => users.id),
+  adminId: text('admin_id'),
   status: text('status').default('active').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
