@@ -1,8 +1,6 @@
-'use client';
-
 import { useState } from 'react';
-import { MoreVertical, ShieldBan, ShieldCheck, Database, FileText } from 'lucide-react';
-import { overrideCredits, toggleUserBan } from '../actions';
+import { MoreVertical, ShieldBan, ShieldCheck, Database, Plus, Minus } from 'lucide-react';
+import { updateUserCredits, toggleUserBan } from '../actions';
 import toast from 'react-hot-toast';
 
 export default function UserActionMenu({
@@ -20,8 +18,9 @@ export default function UserActionMenu({
 
     // Modals state
     const [showCreditModal, setShowCreditModal] = useState(false);
-    const [newCredits, setNewCredits] = useState(currentCredits);
-    const [creditReason, setCreditReason] = useState('Manual override requested by customer support.');
+    const [adjustmentAmount, setAdjustmentAmount] = useState(100);
+    const [creditType, setCreditType] = useState<'credit' | 'debit'>('credit');
+    const [creditReason, setCreditReason] = useState('');
 
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -48,12 +47,17 @@ export default function UserActionMenu({
 
     const handleCreditUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!creditReason.trim()) {
+            toast.error("Please provide a reason for the audit log.");
+            return;
+        }
+
         setIsUpdating(true);
-        const toastId = toast.loading("Overriding credits...");
+        const toastId = toast.loading(`${creditType === 'credit' ? 'Adding' : 'Deducting'} credits...`);
 
         try {
-            await overrideCredits(userId, newCredits, creditReason);
-            toast.success(`Credits updated to ${newCredits}`, { id: toastId });
+            await updateUserCredits(userId, adjustmentAmount, creditType, creditReason);
+            toast.success(`${adjustmentAmount} credits ${creditType === 'credit' ? 'added to' : 'deducted from'} account`, { id: toastId });
             setShowCreditModal(false);
             window.location.reload();
         } catch (e: any) {
@@ -83,7 +87,7 @@ export default function UserActionMenu({
                                 className="w-full text-left px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-3 transition-colors"
                             >
                                 <Database className="w-4 h-4 text-emerald-400" />
-                                Edit Credits
+                                Manage Wallet
                             </button>
                         </div>
 
@@ -104,51 +108,81 @@ export default function UserActionMenu({
                 </>
             )}
 
-            {/* Credit Override Modal */}
+            {/* Wallet Management Modal */}
             {showCreditModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCreditModal(false)} />
                     <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 relative w-full max-w-md shadow-2xl text-left">
-                        <h3 className="text-xl font-bold text-white mb-2">Manual Credit Override</h3>
-                        <p className="text-sm text-slate-400 mb-6">Modifying the ledger for <span className="text-indigo-400 font-medium">{email}</span></p>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-indigo-500/10 rounded-lg">
+                                <Database className="w-5 h-5 text-indigo-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white">Wallet Management</h3>
+                        </div>
+                        <p className="text-sm text-slate-400 mb-6">Update ledger for <span className="text-indigo-400 font-medium">{email}</span></p>
 
-                        <form onSubmit={handleCreditUpdate} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">New Total Credits Amount</label>
-                                <input
-                                    type="number"
-                                    value={newCredits}
-                                    onChange={(e) => setNewCredits(Number(e.target.value))}
-                                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                                    min={0}
-                                    required
-                                />
+                        <form onSubmit={handleCreditUpdate} className="space-y-5">
+                            {/* Transaction Type Toggle */}
+                            <div className="flex bg-slate-950 p-1 rounded-2xl border border-slate-800">
+                                <button
+                                    type="button"
+                                    onClick={() => setCreditType('credit')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${creditType === 'credit' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    <Plus className="w-4 h-4" /> Credit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCreditType('debit')}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all ${creditType === 'debit' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    <Minus className="w-4 h-4" /> Debit
+                                </button>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Audit Reason (Required)</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Amount to {creditType === 'credit' ? 'Add' : 'Deduct'}</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={adjustmentAmount}
+                                        onChange={(e) => setAdjustmentAmount(Number(e.target.value))}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pl-10 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                                        min={1}
+                                        required
+                                    />
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                                        {creditType === 'credit' ? <Plus className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Internal Reason & Notification Context</label>
                                 <textarea
                                     value={creditReason}
                                     onChange={(e) => setCreditReason(e.target.value)}
-                                    className="w-full h-24 bg-slate-950 border border-slate-700 rounded-xl p-3 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none text-sm"
+                                    placeholder="e.g. Compensation for platform downtime, Trial pack bonus, etc."
+                                    className="w-full h-24 bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none text-sm placeholder:text-slate-700"
                                     required
                                 />
+                                <p className="mt-1 text-[10px] text-slate-500 italic">This reason will be visible to the user in their email notification.</p>
                             </div>
 
-                            <div className="flex gap-3 pt-4 border-t border-slate-800">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowCreditModal(false)}
-                                    className="flex-1 px-4 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 font-medium transition-colors"
+                                    className="flex-1 px-4 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 font-medium transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isUpdating}
-                                    className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 font-bold transition-colors shadow-lg shadow-indigo-500/20 disabled:opacity-50"
+                                    className={`flex-1 px-4 py-3 rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 ${creditType === 'credit' ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20' : 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/20'} text-white`}
                                 >
-                                    {isUpdating ? 'Saving...' : 'Apply Override'}
+                                    {isUpdating ? 'Updating...' : `Confirm ${creditType === 'credit' ? 'Addition' : 'Deduction'}`}
                                 </button>
                             </div>
                         </form>

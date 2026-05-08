@@ -24,7 +24,7 @@ async function verifyAdmin() {
 }
 
 // 1. User Management Actions
-export async function overrideCredits(userId: string, newTotalAmount: number, reason: string) {
+export async function updateUserCredits(userId: string, amount: number, type: 'credit' | 'debit', reason: string) {
     const adminId = await verifyAdmin();
 
     // Fetch user details to get email/name for notification
@@ -32,41 +32,66 @@ export async function overrideCredits(userId: string, newTotalAmount: number, re
     if (!user) throw new Error('User not found');
 
     // Check if balance record exists
-    const balance = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
+    const balanceRecord = await db.select().from(creditsBalance).where(eq(creditsBalance.userId, userId)).limit(1);
+    const balance = balanceRecord[0];
 
-    let oldTotal = 0;
-    if (balance.length > 0) {
-        oldTotal = Number(balance[0].totalCredits || '0');
+    let currentTotal = 0;
+    let currentUsed = 0;
+
+    if (balance) {
+        currentTotal = Number(balance.totalCredits || '0');
+        currentUsed = Number(balance.creditsUsed || '0');
+    }
+
+    let newTotal = currentTotal;
+
+    if (type === 'credit') {
+        newTotal = currentTotal + amount;
+    } else {
+        // For Debit, we just subtract from totalCredits. 
+        // We ensure it doesn't go below what's already used or below zero.
+        newTotal = Math.max(currentUsed, currentTotal - amount);
+    }
+
+    if (balance) {
         // Update existing
         await db.update(creditsBalance)
-            .set({ totalCredits: newTotalAmount.toString() })
+            .set({ 
+                totalCredits: newTotal.toString(),
+                updatedAt: new Date()
+            })
             .where(eq(creditsBalance.userId, userId));
     } else {
         // Create new record
         await db.insert(creditsBalance).values({
             userId: userId,
-            totalCredits: newTotalAmount.toString(),
+            totalCredits: newTotal.toString(),
             creditsUsed: '0'
         });
     }
 
-    // Phase: Notify User if credits were ADDED
-    if (newTotalAmount > oldTotal) {
-        const delta = newTotalAmount - oldTotal;
-        try {
-            await sendBonusCreditsEmail(user.email, user.name || 'DhandaLeads Member', delta);
-        } catch (error) {
-            console.error("Failed to send credit bonus email:", error);
-            // We don't throw here to avoid failing the DB transaction just because of email failure
-        }
+    // Phase: Notify User via Professional Email
+    const { sendWalletUpdateEmail } = await import('@/lib/brevo');
+    try {
+        await sendWalletUpdateEmail({
+            email: user.email,
+            name: user.name || 'DhandaLeads Member',
+            amount: amount,
+            type: type,
+            reason: reason,
+            newBalance: newTotal - currentUsed
+        });
+    } catch (error) {
+        console.error("Failed to send wallet update email:", error);
     }
 
     await db.insert(adminAuditLogs).values({
         adminId: adminId,
-        actionType: 'CREDIT_OVERRIDE',
-        description: `Set total credits to ${newTotalAmount} (Old: ${oldTotal}). Reason: ${reason}`,
+        actionType: type === 'credit' ? 'MANUAL_CREDIT' : 'MANUAL_DEBIT',
+        description: `${type.toUpperCase()} of ${amount} credits. New Total: ${newTotal}. Reason: ${reason}`,
         targetId: userId
     });
+
     return { success: true };
 }
 

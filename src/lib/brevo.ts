@@ -263,3 +263,71 @@ export async function sendBonusCreditsEmail(email: string, name: string, credits
         htmlContent,
     });
 }
+
+export async function sendWalletUpdateEmail({
+    email,
+    name,
+    amount,
+    type,
+    reason,
+    newBalance
+}: {
+    email: string;
+    name: string;
+    amount: number;
+    type: 'credit' | 'debit';
+    reason: string;
+    newBalance: number;
+}) {
+    const isCredit = type === 'credit';
+    const accentColor = isCredit ? '#10b981' : '#f43f5e';
+    const icon = isCredit ? '💰' : '📉';
+    const statusText = isCredit ? 'Added to' : 'Deducted from';
+
+    const htmlContent = `
+        <div style="font-family: 'Inter', sans-serif; max-w: 600px; margin: 0 auto; background-color: #0b0f19; padding: 40px; border-radius: 24px; color: #f8fafc; border: 1px solid #1e293b; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="display: inline-block; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 16px;">
+                    <span style="font-size: 40px;">${icon}</span>
+                </div>
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">Wallet Update</h1>
+                <p style="color: #94a3b8; font-size: 14px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">DhandaLeads Ledger Notification</p>
+            </div>
+
+            <div style="background: #111827; border: 1px solid #1f2937; border-radius: 20px; padding: 32px; text-align: center; margin-bottom: 32px;">
+                <p style="color: #94a3b8; margin: 0 0 12px 0; font-size: 14px; font-weight: 500;">Credits ${statusText} Wallet</p>
+                <div style="font-size: 48px; font-weight: 900; color: ${accentColor}; margin-bottom: 12px;">
+                    ${isCredit ? '+' : '-'}${amount}
+                </div>
+                <div style="display: inline-block; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 99px; color: #cbd5e1; font-size: 13px; font-weight: 600;">
+                    New Balance: ${newBalance} Credits
+                </div>
+            </div>
+
+            <div style="margin-bottom: 32px;">
+                <h3 style="color: #ffffff; font-size: 16px; font-weight: 700; margin-bottom: 12px;">Transaction Reason:</h3>
+                <div style="background: rgba(255,255,255,0.03); border-left: 4px solid ${accentColor}; padding: 16px 20px; border-radius: 0 12px 12px 0; color: #94a3b8; font-size: 15px; line-height: 1.6; font-style: italic;">
+                    "${reason}"
+                </div>
+            </div>
+
+            <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 32px;">
+                Hi ${name}, this update was performed by the DhandaLeads Administrative Team. If you have any questions regarding this transaction, please reply to this email or contact support.
+            </p>
+
+            <div style="text-align: center; margin-bottom: 32px;">
+                <a href="${process.env.NEXTAUTH_URL}/dashboard" style="background: ${accentColor}; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 14px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">View Wallet Details</a>
+            </div>
+
+            <div style="padding-top: 32px; border-top: 1px solid #1f2937; text-align: center;">
+                <p style="color: #4b5563; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} DhandaLeads Infrastructure. All rights reserved.</p>
+            </div>
+        </div>
+    `;
+
+    return sendTransactionalEmail({
+        to: [{ email, name }],
+        subject: `[Wallet Update] ${isCredit ? '+' : '-'}${amount} Credits - DhandaLeads`,
+        htmlContent,
+    });
+}
