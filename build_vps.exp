@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 set timeout 600
 set password "dzDnnoI6NMQo1N7g"
-spawn ssh -o StrictHostKeyChecking=no root@203.57.85.2 "cd /var/www/dhandaleads && npm install --legacy-peer-deps && npm run build"
+spawn ssh -o StrictHostKeyChecking=no root@203.57.85.2 "cd /var/www/dhandaleads && git pull origin main && npm install --legacy-peer-deps && npm run build"
 expect {
     "*?assword:*" {
         send "$password\r"

@@ -22,13 +22,15 @@ export async function createAgency(formData: FormData) {
     }
 
     // 2. Create the agency
-    const [newAgency] = await db.insert(agencies).values({
+    const result = await db.insert(agencies).values({
         name,
         subdomain: subdomain.toLowerCase(),
         adminId: user.id,
         status: 'active',
         brandColor: '#0f172a',
-    }).returning();
+    }).returning() as any;
+
+    const newAgency = result[0];
 
     // 3. Update the user's role and agencyId
     await db.update(users).set({
