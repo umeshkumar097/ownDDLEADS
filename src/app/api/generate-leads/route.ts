@@ -45,7 +45,7 @@ export async function POST(req: Request) {
                     totalCredits: userRole?.role === 'pro' ? '999999' : '0',
                     creditsUsed: '0' 
                 })
-                .returning();
+                .returning() as any;
             balance = newBalance;
         }
 
@@ -199,7 +199,7 @@ Return ONLY a valid JSON object with exactly these 3 string keys: {"email": "...
             status: 'New',
             leadValue: leadValue,
             aiAnalysis: aiAnalysisJSON
-        }).returning();
+        }).returning() as any;
 
         return NextResponse.json({ success: true, lead: newLead });
 

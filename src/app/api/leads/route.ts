@@ -27,7 +27,7 @@ export async function DELETE(req: Request) {
                     eq(leads.userId, userId)
                 )
             )
-            .returning();
+            .returning() as any;
 
         if (result.length === 0) {
             return NextResponse.json({ error: 'Lead not found or unauthorized' }, { status: 404 });

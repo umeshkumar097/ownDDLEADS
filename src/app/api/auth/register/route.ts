@@ -44,7 +44,7 @@ export async function POST(req: Request) {
             utmSource,
             utmMedium,
             utmCampaign
-        }).returning();
+        }).returning() as any;
 
         // Generate verification token
         const token = crypto.randomBytes(32).toString('hex');

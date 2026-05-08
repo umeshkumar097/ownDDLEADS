@@ -75,7 +75,7 @@ export async function POST(req: Request) {
                 const [newList] = await db.insert(lists).values({
                     userId,
                     name: listName
-                }).returning();
+                }).returning() as any;
                 targetListId = newList.id;
             } else {
                 return NextResponse.json({ error: 'Destination List ID is required' }, { status: 400 });
@@ -174,7 +174,7 @@ export async function POST(req: Request) {
             leadValue: leadValue,
             buyScore: calculatedBuyScore,
             aiAnalysis: aiAnalysisJSON
-        }).returning();
+        }).returning() as any;
 
         return NextResponse.json({ success: true, lead: newLead, creditCharged: userRole?.role !== 'pro' });
 
