@@ -49,7 +49,7 @@ export async function POST(req: Request) {
             balance = newBalance;
         }
 
-        if (Number(balance.totalCredits) - Number(balance.creditsUsed) <= 0 && userRole?.role !== 'pro') {
+        if (balance && (Number(balance.totalCredits) - Number(balance.creditsUsed) <= 0) && userRole?.role !== 'pro') {
             return NextResponse.json(
                 { error: 'Insufficient credits. Upgrade to Pro for unlimited leads.' },
                 { status: 403 }
