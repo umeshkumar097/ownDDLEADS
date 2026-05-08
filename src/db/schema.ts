@@ -34,6 +34,21 @@ export const users = pgTable('user', {
   utmMedium: text('utm_medium'),
   utmCampaign: text('utm_campaign'),
   membershipType: text('membership_type').default('free').notNull(), // Phase 23: e.g., 'free', 'pro', 'LTD'
+  agencyId: uuid('agency_id').references(() => agencies.id), // Whitelabel Agency
+});
+
+export const agencies = pgTable('agencies', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  subdomain: text('subdomain').unique(),
+  customDomain: text('custom_domain').unique(),
+  logoUrl: text('logo_url'),
+  faviconUrl: text('favicon_url'),
+  brandColor: text('brand_color').default('#0f172a'), // Default indigo-950
+  adminId: text('admin_id').references(() => users.id),
+  status: text('status').default('active').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const accounts = pgTable(

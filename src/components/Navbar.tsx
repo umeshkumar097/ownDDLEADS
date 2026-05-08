@@ -3,14 +3,24 @@
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import { useBranding } from '@/components/BrandingProvider';
 
 export default function Navbar() {
+    const { name, logoUrl } = useBranding();
+
     return (
         <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Link href="/">
-                        <Image src="/logo.png" width={200} height={40} priority={true} alt="Aiclex | DhandaLeads" className="h-10 w-auto object-contain" />
+                        <Image 
+                            src={logoUrl || "/logo.png"} 
+                            width={200} 
+                            height={40} 
+                            priority={true} 
+                            alt={name} 
+                            className="h-10 w-auto object-contain" 
+                        />
                     </Link>
                 </div>
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
