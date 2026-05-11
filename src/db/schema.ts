@@ -47,6 +47,7 @@ export const agencies = pgTable('agencies', {
   brandColor: text('brand_color').default('#0f172a'), // Default indigo-950
   adminId: text('admin_id'),
   status: text('status').default('active').notNull(),
+  totalCredits: numeric('total_credits', { precision: 15, scale: 2 }).default('0').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

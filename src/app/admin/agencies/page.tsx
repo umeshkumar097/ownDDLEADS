@@ -5,6 +5,7 @@ import { Landmark, Plus, Globe, Palette, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import CreateAgencyButton from "./CreateAgencyButton";
+import CreditManagementDialog from "./CreditManagementDialog";
 
 export const dynamic = 'force-dynamic';
 
@@ -78,9 +79,10 @@ export default async function AdminAgenciesPage() {
                             >
                                 Manage
                             </Link>
-                            <button className="flex-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 py-2.5 rounded-xl text-sm font-bold transition-colors border border-cyan-500/20">
-                                Credits
-                            </button>
+                            <CreditManagementDialog 
+                                agencyId={agency.id} 
+                                agencyName={agency.name} 
+                            />
                         </div>
                     </div>
                 ))}
