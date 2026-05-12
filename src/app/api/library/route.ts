@@ -41,11 +41,16 @@ export async function GET(req: Request) {
         const transactions = await db.select().from(allTransactions).where(eq(allTransactions.userId, userId)).limit(1);
         const hasPurchased = transactions.length > 0;
 
+        // Get active pricing plans
+        const { pricingPlans } = await import('@/db/schema');
+        const activePlans = await db.select().from(pricingPlans).orderBy(pricingPlans.priceInINR);
+
         return NextResponse.json({
             success: true,
             lists: userLists,
             leads: userLeads,
             credits: availableCredits,
+            plans: activePlans,
             user: {
                 name: userRole?.name,
                 emailVerified: userRole?.emailVerified,

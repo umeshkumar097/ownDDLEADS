@@ -34,6 +34,7 @@ function DashboardContent() {
     const [newListName, setNewListName] = useState<string>('');
     const [credits, setCredits] = useState<number | string>('...');
     const [userData, setUserData] = useState<{ emailVerified: string | null, hasPurchased: boolean, membershipType: string } | null>(null);
+    const [plans, setPlans] = useState<any[]>([]);
     const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [userName, setUserName] = useState('');
 
@@ -72,6 +73,7 @@ function DashboardContent() {
                     hasPurchased: data.user?.hasPurchased || false,
                     membershipType: data.user?.membershipType || 'free'
                 });
+                setPlans(data.plans || []);
                 // Show phone modal for Google users who have no phone number
                 if (data.user?.isGoogleUser && !data.user?.phone) {
                     setShowPhoneModal(true);
@@ -668,6 +670,7 @@ function DashboardContent() {
                 <WelcomeOfferPopup
                     hasPurchased={userData.hasPurchased}
                     emailVerifiedAt={userData.emailVerified}
+                    plan={plans[0]}
                 />
             )}
         </div>
