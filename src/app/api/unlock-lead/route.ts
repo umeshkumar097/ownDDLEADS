@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         let exactPhone = payload.phone || '';
         let website = payload.linkedin || ''; // We overloaded the linkedin field with website in the payload
 
-        // 3. Gemini AI Icebreaker Generation (1-credit unlock feature)
+        // 3. Gemini AI Icebreaker Generation (1.5-credit unlock feature)
         let icebreaker = `Hi ${payload.name}, I loved your work at ${payload.company}. I'd love to connect!`; // Fallback
         let aiAnalysisJSON = null;
         try {
@@ -138,7 +138,7 @@ export async function POST(req: Request) {
             }
 
             return NextResponse.json({
-                error: 'Email bounced during deep verification. 1 Credit has been auto-refunded to your account.',
+                error: 'Email bounced during deep verification. 1.5 Credits has been auto-refunded to your account.',
                 success: false,
                 bounced: true
             }, { status: 422 });

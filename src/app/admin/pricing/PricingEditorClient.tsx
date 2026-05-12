@@ -1,13 +1,25 @@
 'use client';
 
 import { useState } from 'react';
-import { updatePricingPlan } from '../actions';
+import { updatePricingPlan, seedPricingPlans } from '../actions';
 import toast, { Toaster } from 'react-hot-toast';
-import { Save, Plus, X } from 'lucide-react';
+import { Save, Plus, X, RefreshCcw } from 'lucide-react';
 
 export default function PricingEditorClient({ initialPlans }: { initialPlans: any[] }) {
     const [plans, setPlans] = useState<any[]>(initialPlans);
     const [savingId, setSavingId] = useState<number | null>(null);
+
+    const handleSeed = async () => {
+        if (!confirm("This will reset or update plans to ₹499 and ₹999. Continue?")) return;
+        const toastId = toast.loading("Seeding default plans...");
+        try {
+            await seedPricingPlans();
+            toast.success("Plans seeded! Refreshing...", { id: toastId });
+            window.location.reload();
+        } catch (e) {
+            toast.error("Failed to seed plans.", { id: toastId });
+        }
+    };
 
     const handleUpdateField = (planId: number, field: string, value: any) => {
         setPlans(prev => prev.map(p => p.id === planId ? { ...p, [field]: value } : p));
@@ -70,7 +82,18 @@ export default function PricingEditorClient({ initialPlans }: { initialPlans: an
     };
 
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="space-y-6">
+            <div className="flex justify-between items-center bg-slate-900/50 border border-white/5 p-4 rounded-2xl">
+                <p className="text-slate-400 text-sm italic">Manage public pricing tiers and credit allocations from this matrix.</p>
+                <button 
+                    onClick={handleSeed}
+                    className="flex items-center gap-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 px-4 py-2 rounded-xl text-xs font-bold border border-indigo-500/20 transition-all"
+                >
+                    <RefreshCcw className="w-3.5 h-3.5" /> Reset to Defaults (₹499/₹999)
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
 
             {plans.map(plan => (

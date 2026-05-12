@@ -18,7 +18,7 @@ export default async function PricingPage() {
 
             <div className="flex flex-col items-center mb-16 mt-20">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-center">Load Your CRM Wallet</h1>
-                <p className="text-slate-400 text-lg text-center max-w-xl">No subscriptions. No hidden fees. Buy verified leads as you need them. 1 Credit = 1 Verified Lead.</p>
+                <p className="text-slate-400 text-lg text-center max-w-xl">No subscriptions. No hidden fees. Buy verified leads as you need them. 1.5 Credits = 1 Verified Lead.</p>
             </div>
 
             {/* Client Component passing Server Data */}

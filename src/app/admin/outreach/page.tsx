@@ -1,34 +1,58 @@
-import { db } from "@/db";
-import { users, allTransactions } from "@/db/schema";
-import { desc, eq, notExists, sql } from "drizzle-orm";
-import { Users, Phone, Mail, Calendar, ExternalLink, AlertCircle } from "lucide-react";
+'use client';
 
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from "react";
+import { Users, Phone, Mail, Calendar, ExternalLink, AlertCircle, Send } from "lucide-react";
+import BulkEmailDialog from "./BulkEmailDialog";
 
-export default async function OutreachPage() {
-    // Query users who have NO successful transactions
-    const outreachLeads = await db.select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        phone: users.phone,
-        createdAt: users.emailVerified, // Registration time approx
-    })
-    .from(users)
-    .where(
-        notExists(
-            db.select()
-              .from(allTransactions)
-              .where(
-                  sql`${allTransactions.userId} = ${users.id} AND ${allTransactions.status} = 'SUCCESS'`
-              )
-        )
-    )
-    .orderBy(desc(users.emailVerified)) // Sort by registration time
-    .limit(200);
+export default function OutreachPage() {
+    const [outreachLeads, setOutreachLeads] = useState<any[]>([]);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [showBulkEmail, setShowBulkEmail] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchLeads();
+    }, []);
+
+    const fetchLeads = async () => {
+        try {
+            const res = await fetch('/api/admin/outreach-leads');
+            const data = await res.json();
+            setOutreachLeads(data.leads || []);
+        } catch (error) {
+            console.error("Failed to fetch leads:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.length === outreachLeads.length) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(outreachLeads.map(l => l.id));
+        }
+    };
+
+    const toggleSelect = (id: string) => {
+        if (selectedIds.includes(id)) {
+            setSelectedIds(selectedIds.filter(i => i !== id));
+        } else {
+            setSelectedIds([...selectedIds, id]);
+        }
+    };
+
+    if (loading) return <div className="p-10 text-center text-slate-500">Loading Outreach Data...</div>;
 
     return (
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+            {showBulkEmail && (
+                <BulkEmailDialog 
+                    selectedUserIds={selectedIds} 
+                    onClose={() => setShowBulkEmail(false)} 
+                />
+            )}
+
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-500/20 pb-6">
                 <div className="flex items-center gap-4">
@@ -41,9 +65,19 @@ export default async function OutreachPage() {
                     </div>
                 </div>
                 
-                <div className="bg-orange-500/10 border border-orange-500/20 px-4 py-2 rounded-xl flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-orange-400" />
-                    <span className="text-orange-300 text-sm font-bold">{outreachLeads.length} Hot Leads to Call</span>
+                <div className="flex items-center gap-3">
+                    {selectedIds.length > 0 && (
+                        <button 
+                            onClick={() => setShowBulkEmail(true)}
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-indigo-500/20 transition-all"
+                        >
+                            <Send className="w-4 h-4" /> Send Bulk Email ({selectedIds.length})
+                        </button>
+                    )}
+                    <div className="bg-orange-500/10 border border-orange-500/20 px-4 py-2 rounded-xl flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-orange-400" />
+                        <span className="text-orange-300 text-sm font-bold">{outreachLeads.length} Hot Leads</span>
+                    </div>
                 </div>
             </div>
 
@@ -53,6 +87,14 @@ export default async function OutreachPage() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-black/40 border-b border-white/5">
+                                <th className="py-4 px-6 w-12">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedIds.length === outreachLeads.length && outreachLeads.length > 0}
+                                        onChange={toggleSelectAll}
+                                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                </th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400">User Identity</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400">Contact Details</th>
                                 <th className="py-4 px-6 text-sm font-semibold text-slate-400">Registered On</th>
@@ -61,7 +103,15 @@ export default async function OutreachPage() {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {outreachLeads.map((lead) => (
-                                <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors group">
+                                <tr key={lead.id} className={`hover:bg-white/[0.02] transition-colors group ${selectedIds.includes(lead.id) ? 'bg-indigo-500/5' : ''}`}>
+                                    <td className="py-5 px-6">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedIds.includes(lead.id)}
+                                            onChange={() => toggleSelect(lead.id)}
+                                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-indigo-600 focus:ring-indigo-500"
+                                        />
+                                    </td>
                                     <td className="py-5 px-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 font-bold border border-orange-500/20 uppercase">
@@ -109,7 +159,7 @@ export default async function OutreachPage() {
 
                             {outreachLeads.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="py-20 text-center">
+                                    <td colSpan={5} className="py-20 text-center">
                                         <p className="text-slate-500 italic">No outreach leads found. Everyone is buying! 🎉</p>
                                     </td>
                                 </tr>

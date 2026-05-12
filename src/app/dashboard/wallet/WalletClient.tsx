@@ -161,7 +161,7 @@ export default function WalletClient({ plans }: { plans: any[] }) {
                     <div className="col-span-1 border border-white/5 bg-black/40 rounded-3xl p-8 flex flex-col justify-center">
                         <h3 className="font-bold text-slate-300 mb-4">How it works</h3>
                         <ul className="space-y-4 text-sm text-slate-400">
-                            <li className="flex gap-3"><div className="text-emerald-400 mt-0.5">•</div> 1 Credit = 1 Verified Lead unlocked.</li>
+                            <li className="flex gap-3"><div className="text-emerald-400 mt-0.5">•</div> 1.5 Credits = 1 Verified Lead unlocked.</li>
                             <li className="flex gap-3"><div className="text-emerald-400 mt-0.5">•</div> Free searches do not consume credits.</li>
                             <li className="flex gap-3"><div className="text-emerald-400 mt-0.5">•</div> Credits never expire.</li>
                             <li className="flex gap-3"><div className="text-emerald-400 mt-0.5">•</div> Auto-refund issued if a lead bounces.</li>
@@ -175,7 +175,7 @@ export default function WalletClient({ plans }: { plans: any[] }) {
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h2 className="text-3xl font-extrabold text-white">Select a Credit Package</h2>
-                                <p className="text-slate-400 mt-2">1 Credit = 1 Verified Lead. Credits never expire.</p>
+                                <p className="text-slate-400 mt-2">1.5 Credits = 1 Verified Lead. Credits never expire.</p>
                             </div>
                             <button onClick={() => setShowPricing(false)} className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold text-white transition-all">Close</button>
                         </div>

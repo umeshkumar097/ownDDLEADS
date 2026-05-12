@@ -39,7 +39,7 @@ export default function RefundsPage() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-bold mb-4">4. Bounced Lead Credits</h2>
                     <p className="text-slate-300">
-                        Our system utilizes zero-bounce validation. If a lead you unlock bounces during deep verification, our system is designed to automatically refund that specific 1 Credit back to your wallet balance. This is an automated platform feature, not a monetary refund.
+                        Our system utilizes zero-bounce validation. If a lead you unlock bounces during deep verification, our system is designed to automatically refund that specific 1.5 Credits back to your wallet balance. This is an automated platform feature, not a monetary refund.
                     </p>
                 </section>
 

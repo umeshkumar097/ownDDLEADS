@@ -418,3 +418,41 @@ export async function bulkAddSeoKeywords(csvData: string) {
 
     return { success: true, count: added };
 }
+export async function seedPricingPlans() {
+    await verifyAdmin();
+
+    const plans = [
+        {
+            planName: 'Starter Pack',
+            priceInINR: 499,
+            creditsAwarded: 250, // Example: ~2 INR per lead
+            isPopular: false,
+            features: ['250 Verified Leads', 'CSV Export', 'Basic Support', 'Never Expire']
+        },
+        {
+            planName: 'Growth Pack',
+            priceInINR: 999,
+            creditsAwarded: 600, // Example: ~1.6 INR per lead
+            isPopular: true,
+            features: ['600 Verified Leads', 'CSV Export', 'Priority Support', 'Never Expire', 'Bulk Outreach Tool']
+        }
+    ];
+
+    for (const plan of plans) {
+        await db.insert(pricingPlans).values({
+            ...plan,
+            updatedAt: new Date()
+        }).onConflictDoUpdate({
+            target: pricingPlans.planName,
+            set: {
+                priceInINR: plan.priceInINR,
+                creditsAwarded: plan.creditsAwarded,
+                isPopular: plan.isPopular,
+                features: plan.features,
+                updatedAt: new Date()
+            }
+        });
+    }
+
+    return { success: true };
+}

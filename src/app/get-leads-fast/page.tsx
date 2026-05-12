@@ -370,7 +370,7 @@ export default function GetLeadsFast({ searchParams }: { searchParams: { keyword
                     <div className="space-y-4">
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
                             <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> What exactly is a "Verified Credit"?</h4>
-                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">1 Credit = 1 successfully unlocked, live contact (Email or Phone number). If the AI flags the contact as dead or if it bounces, zero credits are deducted. You only pay for utility.</p>
+                            <p className="text-slate-400 text-[15px] leading-relaxed ml-9">1.5 Credits = 1 successfully unlocked, live contact (Email or Phone number). If the AI flags the contact as dead or if it bounces, zero credits are deducted. You only pay for utility.</p>
                         </div>
                         <div className="bg-slate-950 p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-colors">
                             <h4 className="font-bold text-lg text-white mb-3 flex items-start gap-3"><HelpCircle className="w-6 h-6 text-indigo-400 shrink-0" /> Is the aggregated data legally compliant?</h4>
