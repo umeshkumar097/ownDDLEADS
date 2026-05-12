@@ -408,7 +408,7 @@ function DashboardContent() {
                                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
                                     <input
                                         type="text"
-                                        placeholder="Job Role (e.g. CEO, Founder)"
+                                        placeholder="Job Role (e.g. Sales Manager, Marketing Head)"
                                         value={jobRole}
                                         onChange={e => setJobRole(e.target.value)}
                                         className="w-full bg-black/40 border border-white/5 rounded-2xl pl-16 pr-6 py-5 text-white text-base placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
