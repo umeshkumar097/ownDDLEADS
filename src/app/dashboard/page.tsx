@@ -419,7 +419,7 @@ function DashboardContent() {
                                     <Users className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400" />
                                     <input
                                         type="text"
-                                        placeholder="Location (e.g. London)"
+                                        placeholder="Location (e.g. Delhi, Noida, Bangalore)"
                                         value={location}
                                         onChange={e => setLocation(e.target.value)}
                                         className="w-full bg-black/40 border border-white/5 rounded-2xl pl-16 pr-6 py-5 text-white text-base placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
