@@ -390,8 +390,8 @@ function DashboardContent() {
                 <div className="flex flex-col gap-6">
                     {/* Header */}
                     <div className="text-center md:text-left">
-                        <h1 className="text-4xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Audience Discovery</h1>
-                        <p className="text-slate-500 max-w-xl text-base font-medium">Extract highly verified B2B contacts with AI-powered intelligence.</p>
+                        <h1 className="text-4xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Business Discovery</h1>
+                        <p className="text-slate-500 max-w-xl text-base font-medium">Find and extract leads from any industry or business category worldwide.</p>
                     </div>
 
                     {/* Search Engine Area */}
@@ -405,10 +405,10 @@ function DashboardContent() {
                         <div className="relative bg-slate-900/60 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-2xl">
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                                 <div className="lg:col-span-5 relative">
-                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
+                                    <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
                                     <input
                                         type="text"
-                                        placeholder="Job Role (e.g. Sales Manager, Marketing Head)"
+                                        placeholder="Business Category (e.g. Digital Marketing, Real Estate)"
                                         value={jobRole}
                                         onChange={e => setJobRole(e.target.value)}
                                         className="w-full bg-black/40 border border-white/5 rounded-2xl pl-16 pr-6 py-5 text-white text-base placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
@@ -511,7 +511,7 @@ function DashboardContent() {
                                                     </td>
                                                     <td className="py-4 px-6">
                                                         <div className="font-bold text-white mb-1">{lead.name}</div>
-                                                        <div className="text-xs text-slate-400">{lead.role} @ {lead.company}</div>
+                                                        <div className="text-xs text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-md inline-block mt-1">{lead.role}</div>
                                                     </td>
                                                     <td className="py-4 px-6 font-mono text-xs text-slate-500 space-y-1">
                                                         <div className="flex items-center gap-2 mb-2"><CheckCircle2 className="w-5 h-5 text-indigo-400" /> Unlock verified Email & LinkedIn</div>
@@ -564,7 +564,7 @@ function DashboardContent() {
                                         <tr className="border-b border-white/5 bg-white/[0.02]">
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400">Contact Person</th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400">Contact Detail</th>
-                                            <th className="py-4 px-6 text-sm font-medium text-slate-400">Company & Role</th>
+                                            <th className="py-4 px-6 text-sm font-medium text-slate-400">Business & Category</th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400 text-center">AI Verification</th>
                                             <th className="py-4 px-6 text-sm font-medium text-slate-400 text-right">Delete</th>
                                         </tr>
@@ -595,7 +595,8 @@ function DashboardContent() {
                                                     </td>
                                                     <td className="py-4 px-6">
                                                         <div className="font-medium text-slate-300">{lead.company}</div>
-                                                        <div className="text-sm text-slate-500">{lead.role} · {lead.location}</div>
+                                                        <div className="text-sm text-indigo-400 font-medium">{lead.role}</div>
+                                                        <div className="text-[10px] text-slate-600 uppercase tracking-tighter mt-1">{lead.location}</div>
                                                     </td>
                                                     <td className="py-4 px-6">
                                                         <div className="flex items-center justify-center gap-2">
