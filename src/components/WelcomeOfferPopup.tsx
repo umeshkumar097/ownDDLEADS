@@ -7,17 +7,28 @@ import { useRouter } from 'next/navigation';
 interface WelcomeOfferPopupProps {
     emailVerifiedAt: string;
     hasPurchased: boolean;
+    plan?: {
+        priceInINR: number;
+        creditsAwarded: number;
+        planName: string;
+    };
 }
 
-export default function WelcomeOfferPopup({ emailVerifiedAt, hasPurchased }: WelcomeOfferPopupProps) {
+export default function WelcomeOfferPopup({ emailVerifiedAt, hasPurchased, plan }: WelcomeOfferPopupProps) {
     const [timeLeft, setTimeLeft] = useState<{ hours: number, minutes: number, seconds: number } | null>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const router = useRouter();
 
+    // Use dynamic data or fallback to original hardcoded values
+    const planPrice = plan?.priceInINR || 999;
+    const planCredits = plan?.creditsAwarded || 999;
+    const planName = plan?.planName || 'Starter Pack';
+
     useEffect(() => {
         // Only run on client, avoid hydration mismatch
         if (hasPurchased) return;
+        if (!emailVerifiedAt) return; // Wait for data
 
         // Check if user has explicitly dismissed this specific session's popup
         const hasDismissed = sessionStorage.getItem('welcome_offer_dismissed');
