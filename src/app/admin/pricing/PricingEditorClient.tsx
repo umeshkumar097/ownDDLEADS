@@ -196,6 +196,7 @@ export default function PricingEditorClient({ initialPlans }: { initialPlans: an
                     )}
                 </div>
             ))}
+            </div>
         </div>
     );
 }
