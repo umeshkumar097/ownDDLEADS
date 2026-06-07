@@ -528,24 +528,24 @@ export default function HomeClient() {
                 key={plan.id}
                 whileHover={{ y: -10 }}
                 className={`relative p-8 rounded-[32px] border flex flex-col transition-all h-full ${
-                  plan.name.toLowerCase().includes('growth')
+                  plan.planName && plan.planName.toLowerCase().includes('growth')
                   ? 'bg-gradient-to-b from-indigo-50 to-white border-indigo-300 shadow-2xl shadow-indigo-100 scale-105 z-10' 
                   : 'bg-white border-slate-200 shadow-lg'
                 }`}
               >
-                {plan.name.toLowerCase().includes('growth') && (
+                {plan.planName && plan.planName.toLowerCase().includes('growth') && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-black tracking-widest px-4 py-1 rounded-full animate-pulse">MOST POPULAR</div>
                 )}
-                <h3 className="text-xl font-bold mb-2 text-slate-900">{plan.name}</h3>
+                <h3 className="text-xl font-bold mb-2 text-slate-900">{plan.planName}</h3>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-slate-900">₹{plan.price}</span>
+                  <span className="text-4xl font-black text-slate-900">₹{plan.priceInINR}</span>
                   <span className="text-slate-500 text-sm">/one-time</span>
                 </div>
                 
                 <div className={`p-4 rounded-2xl mb-8 font-bold text-center border ${
-                  plan.name.toLowerCase().includes('growth') ? 'bg-indigo-100 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-100 text-slate-700'
+                  plan.planName && plan.planName.toLowerCase().includes('growth') ? 'bg-indigo-100 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-100 text-slate-700'
                 }`}>
-                  {plan.credits} Leads
+                  {plan.creditsAwarded} Leads
                 </div>
 
                 <ul className="space-y-4 mb-10 flex-1">
@@ -557,7 +557,7 @@ export default function HomeClient() {
                 <Link 
                   href="/register"
                   className={`w-full py-4 rounded-2xl font-black text-center transition-all ${
-                    plan.name.toLowerCase().includes('growth') ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg' : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    plan.planName && plan.planName.toLowerCase().includes('growth') ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg' : 'bg-slate-900 hover:bg-slate-800 text-white'
                   }`}
                 >
                   Get Started

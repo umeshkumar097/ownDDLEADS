@@ -8,6 +8,13 @@
       "when": 1771619278787,
       "tag": "0000_spooky_thundra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780813921201,
+      "tag": "0001_same_wolfsbane",
+      "breakpoints": true
     }
   ]
 }
