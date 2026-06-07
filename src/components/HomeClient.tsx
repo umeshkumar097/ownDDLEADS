@@ -463,10 +463,10 @@ export default function HomeClient() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { num: 10000000, suffix: "+", label: "Businesses" },
+              { num: 2500000, suffix: "+", label: "Businesses" },
               { num: 500, suffix: "+", label: "Categories" },
-              { num: 100, suffix: "+", label: "Cities" },
-              { num: 50000, suffix: "+", label: "Users" }
+              { num: 120, suffix: "+", label: "Cities" },
+              { num: 15000, suffix: "+", label: "Users" }
             ].map((stat, i) => (
               <div key={i} className="p-2 sm:p-4 md:p-6">
                 <div className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-black text-white mb-2 drop-shadow-lg break-words">
