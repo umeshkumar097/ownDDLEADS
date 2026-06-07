@@ -463,7 +463,7 @@ export default function HomeClient() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { num: 2500000, suffix: "+", label: "Businesses" },
+              { num: 2900000, suffix: "+", label: "Businesses" },
               { num: 500, suffix: "+", label: "Categories" },
               { num: 120, suffix: "+", label: "Cities" },
               { num: 15000, suffix: "+", label: "Users" }

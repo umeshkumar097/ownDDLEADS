@@ -35,5 +35,5 @@ export default function AnimatedCounter({
     });
   }, [springValue]);
 
-  return <span ref={ref}>{displayValue.toLocaleString()}</span>;
+  return <span ref={ref}>{Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(displayValue)}</span>;
 }
