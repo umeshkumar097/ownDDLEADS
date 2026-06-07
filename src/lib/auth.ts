@@ -7,9 +7,18 @@ import { eq } from 'drizzle-orm';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
+import { CredentialsSignin } from 'next-auth';
+
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {
     apiVersion: '2025-01-27.acacia' as any,
 });
+
+class CustomAuthError extends CredentialsSignin {
+    constructor(code: string) {
+        super();
+        this.code = code;
+    }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: DrizzleAdapter(db),
@@ -28,24 +37,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    throw new Error("Invalid credentials");
+                    throw new CustomAuthError("Invalid credentials");
                 }
 
                 const userList = await db.select().from(users).where(eq(users.email, (credentials.email as string).toLowerCase()));
                 const user = userList[0];
 
                 if (!user || !user.password) {
-                    throw new Error("User not found or uses Google Login");
+                    throw new CustomAuthError("User not found or uses Google Login");
                 }
 
                 if (user.isBanned) {
-                    throw new Error("Your account has been banned due to policy violations.");
+                    throw new CustomAuthError("Account banned");
                 }
 
                 const isValid = await bcrypt.compare(credentials.password as string, user.password);
 
                 if (!isValid) {
-                    throw new Error("Invalid password");
+                    throw new CustomAuthError("Invalid email or password");
                 }
 
                 return {
