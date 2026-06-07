@@ -353,6 +353,25 @@ export const seoTranslations = pgTable('seo_translations', {
   translatedContent: text('translated_content').notNull(),
 });
 
+// --- Phase 26: Programmatic SEO Engine ---
+
+export const seoGeneratedPages = pgTable('seo_generated_pages', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 255 }).unique().notNull(), // e.g. "restaurants-in-delhi"
+  category: varchar('category', { length: 255 }).notNull(), // e.g. "Restaurants"
+  city: varchar('city', { length: 255 }).notNull(), // e.g. "Delhi"
+  title: varchar('title', { length: 255 }).notNull(),
+  metaDescription: text('meta_description').notNull(),
+  h1Headline: varchar('h1_headline', { length: 255 }).notNull(),
+  contentBlocks: jsonb('content_blocks').notNull(), // Array of paragraphs/sections
+  faqs: jsonb('faqs').notNull(), // Array of {q, a}
+  businessData: jsonb('business_data'), // Array of sample local businesses
+  ctaOffer: varchar('cta_offer', { length: 255 }).default('Get 499 ₹ Special Offer').notNull(),
+  isPublished: boolean('is_published').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // --- Phase 23: AppSumo Automation & License Key Management ---
 
 export const appsumoCodes = pgTable('appsumo_codes', {

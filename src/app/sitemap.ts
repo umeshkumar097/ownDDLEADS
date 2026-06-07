@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { db } from '@/db';
-import { seoCities, seoKeywords } from '@/db/schema';
+import { seoCities, seoKeywords, seoGeneratedPages } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -23,11 +23,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
 
     try {
-        // Fetch active cities and keywords for dynamic SEO URLs
+        // Fetch active cities and keywords for dynamic SEO URLs (Legacy)
         const cities = await db.select({ slug: seoCities.slug }).from(seoCities).where(eq(seoCities.isActive, true));
         const keywords = await db.select({ slug: seoKeywords.slug }).from(seoKeywords).where(eq(seoKeywords.isActive, true));
 
-        // Generate URL permutations
+        // Generate URL permutations (Legacy)
         for (const keyword of keywords) {
             for (const city of cities) {
                 routes.push({
@@ -37,6 +37,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                     priority: 0.7,
                 });
             }
+        }
+
+        // Fetch Programmatic SEO Pages (New)
+        const generatedPages = await db.select({ slug: seoGeneratedPages.slug, updatedAt: seoGeneratedPages.updatedAt })
+                                       .from(seoGeneratedPages)
+                                       .where(eq(seoGeneratedPages.isPublished, true));
+        
+        for (const page of generatedPages) {
+            routes.push({
+                url: `${baseUrl}/${page.slug}`,
+                lastModified: page.updatedAt,
+                changeFrequency: 'weekly' as const,
+                priority: 0.8,
+            });
         }
     } catch (error) {
         console.error("Failed to generate SEO URLs for sitemap:", error);

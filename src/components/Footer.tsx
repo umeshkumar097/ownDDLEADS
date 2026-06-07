@@ -41,6 +41,11 @@ export default function Footer() {
                 <div>
                     <h4 className="text-white font-bold mb-4 flex items-center gap-2">Locations We Serve</h4>
                     <ul className="space-y-2">
+                        <li className="mb-4">
+                            <Link href="/locations" className="text-emerald-400 font-bold border-b border-emerald-500/30 hover:border-emerald-400 transition-colors">
+                                View Full Directory &rarr;
+                            </Link>
+                        </li>
                         {topCities.map((city) => (
                             <li key={city.slug}>
                                 <Link
