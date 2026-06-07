@@ -468,8 +468,8 @@ export default function HomeClient() {
               { num: 100, suffix: "+", label: "Cities" },
               { num: 50000, suffix: "+", label: "Users" }
             ].map((stat, i) => (
-              <div key={i} className="p-6">
-                <div className="text-4xl md:text-6xl font-black text-white mb-2 drop-shadow-lg">
+              <div key={i} className="p-2 sm:p-4 md:p-6">
+                <div className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-black text-white mb-2 drop-shadow-lg break-words">
                   <AnimatedCounter value={stat.num} />{stat.suffix}
                 </div>
                 <div className="text-emerald-300 font-bold tracking-widest uppercase text-sm drop-shadow">{stat.label}</div>
