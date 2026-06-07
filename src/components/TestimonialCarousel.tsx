@@ -39,26 +39,26 @@ const testimonials = [
 
 export default function TestimonialCarousel() {
   return (
-    <div className="relative flex overflow-x-hidden group">
-      <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[#05060f] to-transparent z-10" />
-      <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[#05060f] to-transparent z-10" />
+    <div className="relative flex overflow-x-hidden group py-4">
+      <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
+      <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
       
       <div className="flex animate-marquee group-hover:pause space-x-6">
         {[...testimonials, ...testimonials].map((t, i) => (
           <div 
             key={i} 
-            className="w-[400px] shrink-0 p-8 rounded-[32px] bg-white/[0.03] border border-white/10 hover:bg-white/[0.05] hover:border-emerald-500/30 transition-all"
+            className="w-[400px] shrink-0 p-8 rounded-[32px] bg-slate-50 border border-slate-200 hover:bg-white shadow-sm hover:shadow-xl hover:border-emerald-500/30 transition-all"
           >
-            <div className="flex gap-1 text-emerald-400 mb-6">
+            <div className="flex gap-1 text-emerald-500 mb-6">
               {[1,2,3,4,5].map(star => <Star key={star} className="w-4 h-4 fill-current" />)}
             </div>
-            <p className="text-slate-300 text-lg leading-relaxed mb-8">"{t.content}"</p>
+            <p className="text-slate-700 text-lg leading-relaxed mb-8">"{t.content}"</p>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-800 relative">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-200 relative">
                 <Image src={t.image} alt={t.name} fill className="object-cover" />
               </div>
               <div>
-                <h4 className="font-bold text-white">{t.name}</h4>
+                <h4 className="font-bold text-slate-900">{t.name}</h4>
                 <p className="text-xs text-slate-500">{t.role}</p>
               </div>
             </div>

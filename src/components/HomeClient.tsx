@@ -633,9 +633,8 @@ export default function HomeClient() {
       </section>
 
       {/* --- 14. FINAL CTA --- */}
-      <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 to-indigo-700 -z-10" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+      <section className="py-32 relative overflow-hidden bg-gradient-to-br from-emerald-600 to-indigo-700">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
         
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
            <motion.div 
